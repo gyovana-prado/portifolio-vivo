@@ -1,0 +1,19 @@
+{
+  "id": "2026-07-09-git-as-database",
+  "date": "2026-07-09",
+  "type": "decision",
+  "tags": ["architecture", "static-site", "git", "astro"],
+  "narrative": {
+    "en": "My portfolio needed to update itself without becoming a server to maintain. The decision: no CMS, no database, no backend — content lives as JSON in a git repository, every update is a commit, and the site is a static build triggered by pushes. A drafts branch acts as a mandatory buffer: automation can write, but nothing goes public without a human merge.",
+    "pt": "Meu portfólio precisava se atualizar sozinho sem virar um servidor pra manter. A decisão: sem CMS, sem banco de dados, sem backend — o conteúdo vive como JSON num repositório git, cada atualização é um commit, e o site é um build estático disparado por push. Uma branch drafts funciona como buffer obrigatório: a automação pode escrever, mas nada vai a público sem um merge humano."
+  },
+  "technical": {
+    "en": "A competent peer might reasonably have chosen a headless CMS or a small API. Git-as-database won on three fronts: full history and rollback for free, zero infrastructure cost, and a deploy pipeline (push → rebuild) that static hosts provide out of the box. The drafts branch exists for **confidentiality**, not relevance — client work must never auto-publish without a human glance. Trade-off accepted: no real-time updates, which a portfolio doesn't need.",
+    "pt": "Um par competente poderia razoavelmente ter escolhido um CMS headless ou uma API pequena. Git-como-banco-de-dados venceu em três frentes: histórico completo e rollback de graça, custo de infraestrutura zero, e um pipeline de deploy (push → rebuild) que hosts estáticos oferecem de fábrica. A branch drafts existe por **confidencialidade**, não relevância — trabalho de cliente nunca pode auto-publicar sem um olhar humano. Trade-off aceito: sem atualizações em tempo real, que um portfólio não precisa."
+  },
+  "outcome": {
+    "en": "Zero infrastructure to operate; every content change is auditable in git history.",
+    "pt": "Zero infraestrutura pra operar; toda mudança de conteúdo é auditável no histórico do git."
+  },
+  "status": "published"
+}

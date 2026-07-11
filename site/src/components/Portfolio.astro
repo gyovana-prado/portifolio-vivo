@@ -1,0 +1,55 @@
+---
+import type { Lang } from '../lib/content';
+import {
+  getProfile,
+  getCV,
+  getNow,
+  getFeed,
+  getProjects,
+  t,
+} from '../lib/content';
+import { getGitHubStats } from '../lib/github';
+import Base from '../layouts/Base.astro';
+import Hero from './Hero.astro';
+import Now from './Now.astro';
+import Feed from './Feed.astro';
+import Projects from './Projects.astro';
+import CV from './CV.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+// All loaded at build time.
+const profile = getProfile();
+const cv = getCV();
+const now = getNow();
+const feed = getFeed();
+const projects = getProjects();
+const stats = await getGitHubStats(profile.github_username);
+
+const title = `${profile.name} — ${t(profile.headline, lang)}`;
+const description = profile.bio ? t(profile.bio, lang) : t(profile.headline, lang);
+
+// schema.org Person — structured data for search engines.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: t(profile.headline, lang),
+  url: Astro.site?.toString(),
+  sameAs: profile.links
+    .map((l) => l.url)
+    .filter((url) => url.startsWith('http')),
+};
+---
+
+<Base lang={lang} title={title} description={description} jsonLd={jsonLd}>
+  <Hero lang={lang} profile={profile} stats={stats} />
+  <Now lang={lang} now={now} />
+  <Feed lang={lang} entries={feed} />
+  <Projects lang={lang} projects={projects} />
+  <CV lang={lang} cv={cv} />
+</Base>

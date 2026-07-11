@@ -1,0 +1,187 @@
+{
+  "experience": [
+    {
+      "role": {
+        "en": "Data & AI Engineer (Human in the Loop)",
+        "pt": "Engenheira de Dados & IA (Human in the Loop)"
+      },
+      "organization": "Supernova Labs",
+      "location": { "en": "Remote", "pt": "Remoto" },
+      "period": { "start": "2026-02", "end": null },
+      "summary": {
+        "en": "Design and operate data and AI pipelines on GCP, building Claude-based tooling that lets models operate with each client's knowledge, rules, and context while keeping human judgment in the loop.",
+        "pt": "Desenho e opero pipelines de dados e IA no GCP, construindo ferramentas baseadas em Claude que permitem aos modelos operar com o conhecimento, as regras e o contexto de cada cliente, mantendo o julgamento humano no circuito."
+      },
+      "highlights": [
+        {
+          "en": "Design and operate data/AI pipelines on GCP (Cloud Functions, BigQuery), integrating external APIs to feed structured context to LLMs and process outputs before final consumption.",
+          "pt": "Desenho e opero pipelines de dados/IA no GCP (Cloud Functions, BigQuery), integrando APIs externas para alimentar contexto estruturado aos LLMs e processar as saídas antes do consumo final."
+        },
+        {
+          "en": "Build reusable Claude skills and custom MCP (Model Context Protocol) servers for Claude Code, Claude API, and Claude Enterprise.",
+          "pt": "Construo skills reutilizáveis do Claude e servidores MCP (Model Context Protocol) customizados para Claude Code, Claude API e Claude Enterprise."
+        },
+        {
+          "en": "Delivered an AI-powered analytics pipeline for a large enterprise fitness client that reads survey responses at scale, with human validation and refinement kept in the loop.",
+          "pt": "Entreguei um pipeline de analytics com IA para um grande cliente de fitness enterprise que lê respostas de pesquisa em escala, com validação e refinamento humanos mantidos no circuito."
+        },
+        {
+          "en": "Curate prompts and context to ensure consistent, production-grade LLM outputs, and translate business needs into architectures where AI accelerates delivery without replacing human judgment.",
+          "pt": "Curo prompts e contexto para garantir saídas de LLM consistentes e prontas para produção, e traduzo necessidades de negócio em arquiteturas onde a IA acelera a entrega sem substituir o julgamento humano."
+        }
+      ]
+    },
+    {
+      "role": {
+        "en": "Data Engineer (Mid-Level)",
+        "pt": "Engenheira de Dados (Pleno)"
+      },
+      "organization": "UOL EdTech",
+      "location": { "en": "São Paulo, Brazil", "pt": "São Paulo, Brasil" },
+      "period": { "start": "2022-10", "end": "2026-01" },
+      "summary": {
+        "en": "Built scalable pipelines with dbt Cloud, BigQuery, and Looker, and led data-modeling and performance work alongside data democratization initiatives.",
+        "pt": "Construí pipelines escaláveis com dbt Cloud, BigQuery e Looker, e liderei trabalhos de modelagem de dados e performance junto a iniciativas de democratização de dados."
+      },
+      "highlights": [
+        {
+          "en": "Restructured data models to support multiple outcomes per user journey.",
+          "pt": "Reestruturei modelos de dados para suportar múltiplos desfechos por jornada de usuário."
+        },
+        {
+          "en": "Optimized a critical table, reducing execution time by 88%.",
+          "pt": "Otimizei uma tabela crítica, reduzindo o tempo de execução em 88%."
+        },
+        {
+          "en": "Contributed to RFCs, solution reviews, and stakeholder interviews.",
+          "pt": "Contribuí em RFCs, revisões de solução e entrevistas com stakeholders."
+        },
+        {
+          "en": "Onboarded junior and mid-level hires and created an internal knowledge-sharing channel for data democratization.",
+          "pt": "Fiz o onboarding de contratações júnior e pleno e criei um canal interno de compartilhamento de conhecimento para democratização de dados."
+        }
+      ]
+    },
+    {
+      "role": {
+        "en": "Data Engineer (Mid-Level)",
+        "pt": "Engenheira de Dados (Pleno)"
+      },
+      "organization": "Tenbu",
+      "location": { "en": "São Paulo, Brazil", "pt": "São Paulo, Brasil" },
+      "period": { "start": "2021-12", "end": "2022-07" },
+      "summary": {
+        "en": "Developed ETL pipelines and analytical solutions, supporting squads from requirements gathering to delivery.",
+        "pt": "Desenvolvi pipelines de ETL e soluções analíticas, apoiando squads do levantamento de requisitos à entrega."
+      },
+      "highlights": [
+        {
+          "en": "Developed ETL pipelines using IBM DataStage and designed Control-M workflows.",
+          "pt": "Desenvolvi pipelines de ETL com IBM DataStage e desenhei workflows no Control-M."
+        },
+        {
+          "en": "Built dashboards in Power BI and supported squads with requirements gathering and delivery.",
+          "pt": "Construí dashboards em Power BI e apoiei squads com levantamento de requisitos e entrega."
+        }
+      ]
+    },
+    {
+      "role": {
+        "en": "Associate Application Developer & BTP Intern",
+        "pt": "Desenvolvedora de Aplicações Associada & Estagiária BTP"
+      },
+      "organization": "IBM Brasil",
+      "location": { "en": "São Paulo, Brazil", "pt": "São Paulo, Brasil" },
+      "period": { "start": "2019-08", "end": "2021-05" },
+      "summary": {
+        "en": "Developed and maintained ETL jobs and supported BI reporting in an enterprise environment.",
+        "pt": "Desenvolvi e mantive jobs de ETL e apoiei relatórios de BI em ambiente enterprise."
+      },
+      "highlights": [
+        {
+          "en": "Developed and maintained ETL jobs with IBM DataStage.",
+          "pt": "Desenvolvi e mantive jobs de ETL com IBM DataStage."
+        },
+        {
+          "en": "Produced technical documentation, managed OLAP cubes, and supported reporting with IBM Cognos.",
+          "pt": "Produzi documentação técnica, gerenciei cubos OLAP e apoiei relatórios com IBM Cognos."
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "category": { "en": "Languages & Frameworks", "pt": "Linguagens & Frameworks" },
+      "items": ["SQL", "Python", "Jinja"]
+    },
+    {
+      "category": { "en": "Data & Cloud", "pt": "Dados & Cloud" },
+      "items": ["dbt Cloud", "BigQuery", "GCP", "Cloud Functions", "GitHub Actions"]
+    },
+    {
+      "category": { "en": "AI & LLM Engineering", "pt": "Engenharia de IA & LLM" },
+      "items": ["Claude API", "Claude Code", "Claude Enterprise", "MCP", "Claude Skills", "Prompt Engineering"]
+    },
+    {
+      "category": { "en": "BI & Visualization", "pt": "BI & Visualização" },
+      "items": ["Looker", "Power BI", "IBM Cognos"]
+    },
+    {
+      "category": { "en": "ETL & Orchestration", "pt": "ETL & Orquestração" },
+      "items": ["dbt", "IBM DataStage", "Control-M", "Prefect"]
+    }
+  ],
+  "education": [
+    {
+      "degree": {
+        "en": "Postgraduate in Data Science and Artificial Intelligence",
+        "pt": "Pós-graduação em Ciência de Dados e Inteligência Artificial"
+      },
+      "institution": "PUC-RS",
+      "period": { "start": "2023-11", "end": null }
+    },
+    {
+      "degree": {
+        "en": "Associate Degree in Systems Analysis and Development",
+        "pt": "Tecnólogo em Análise e Desenvolvimento de Sistemas"
+      },
+      "institution": "UNASP",
+      "period": { "start": "2018-04", "end": "2020-06" }
+    },
+    {
+      "degree": {
+        "en": "High School with Technical Degree in IT",
+        "pt": "Ensino Médio com Técnico em Informática"
+      },
+      "institution": "ETEC Euro Albino de Souza",
+      "period": { "start": "2015-02", "end": "2018-12" }
+    }
+  ],
+  "certifications": [
+    { "name": "dbt Learning Path", "issuer": "dbt Labs", "date": "2025-05" },
+    { "name": "dbt Fundamentals", "issuer": "dbt Labs", "date": "2025-05" },
+    { "name": "Refactoring SQL to Modularity", "issuer": "dbt Labs", "date": "2025-05" },
+    { "name": "Big Data Foundations", "issuer": "IBM", "date": "2019-11" },
+    { "name": "Python for Data Science", "issuer": "IBM", "date": "2019-10" }
+  ],
+  "languages": [
+    {
+      "language": { "en": "Portuguese", "pt": "Português" },
+      "level": { "en": "Native", "pt": "Nativo" }
+    },
+    {
+      "language": { "en": "English", "pt": "Inglês" },
+      "level": { "en": "Advanced", "pt": "Avançado" }
+    }
+  ],
+  "awards": [
+    {
+      "title": {
+        "en": "1st place — ABStartups Hackathon (university challenge focused on innovative, market-driven solutions)",
+        "pt": "1º lugar — Hackathon ABStartups (desafio universitário com foco em soluções inovadoras e orientadas a mercado)"
+      },
+      "issuer": "ABStartups",
+      "date": "2019"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+---
+import type { Lang, Project } from '../lib/content';
+import { t } from '../lib/content';
+import { ui } from '../lib/ui';
+import { md } from '../lib/md';
+import { formatPeriod } from '../lib/dates';
+
+interface Props {
+  lang: Lang;
+  projects: Project[];
+}
+
+const { lang, projects } = Astro.props;
+const strings = ui[lang];
+
+function period(p: Project['period']): string {
+  return formatPeriod(p, lang, strings.present);
+}
+---
+
+{projects.length > 0 && (
+  <section id="projects" class="reveal">
+    <h2 class="section-title">{strings.projects}</h2>
+    <div class="project-list">
+      {projects.map((project) => (
+        <article class="project reveal">
+          <div class="project-head">
+            <h3>{t(project.title, lang)}</h3>
+            <span class="faint period">{period(project.period)}</span>
+          </div>
+          <p class="muted">{t(project.summary, lang)}</p>
+
+          {project.case_study && (
+            <details>
+              <summary>{strings.caseStudy}</summary>
+              <div class="prose case-study" set:html={md(t(project.case_study, lang))} />
+            </details>
+          )}
+
+          <div class="stack">
+            {project.stack.map((s) => <span class="tag">{s}</span>)}
+          </div>
+
+          {project.links && (
+            <div class="project-links">
+              {Object.entries(project.links).map(([key, url]) => (
+                <a href={url} target="_blank" rel="noopener">{key}</a>
+              ))}
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  .project-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  h3 {
+    font-size: 1.05rem;
+  }
+  .period {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  .case-study {
+    margin-top: 10px;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+  }
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .project-links {
+    display: flex;
+    gap: 14px;
+    margin-top: 10px;
+    font-size: 0.88rem;
+    text-transform: capitalize;
+  }
+</style>

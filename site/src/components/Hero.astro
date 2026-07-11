@@ -1,0 +1,100 @@
+---
+import type { Lang, Profile } from '../lib/content';
+import { t } from '../lib/content';
+import { ui } from '../lib/ui';
+import type { GitHubStats } from '../lib/github';
+
+interface Props {
+  lang: Lang;
+  profile: Profile;
+  stats: GitHubStats | null;
+}
+
+const { lang, profile, stats } = Astro.props;
+const strings = ui[lang];
+---
+
+<header class="hero">
+  {profile.avatar && <img class="avatar reveal" src={profile.avatar} alt={profile.name} />}
+  <h1 class="reveal" transition:name="hero-name">{profile.name}</h1>
+  <p class="headline reveal">{t(profile.headline, lang)}<span class="cursor" aria-hidden="true"></span></p>
+  {profile.location && <p class="faint location reveal">{t(profile.location, lang)}</p>}
+  {profile.bio && <p class="muted bio reveal">{t(profile.bio, lang)}</p>}
+
+  <div class="links reveal">
+    {profile.links.map((l) => (
+      <a href={l.url} rel="me noopener" target="_blank">{l.label}</a>
+    ))}
+  </div>
+
+  {stats && (
+    <div class="stats reveal">
+      <a href={stats.profileUrl} target="_blank" rel="noopener">
+        <strong>{stats.publicRepos}</strong> <span class="faint">{strings.repos}</span>
+      </a>
+      <span><strong>{stats.followers}</strong> <span class="faint">{strings.followers}</span></span>
+      <span><strong>{stats.totalStars}</strong> <span class="faint">{strings.stars}</span></span>
+    </div>
+  )}
+</header>
+
+<style>
+  .hero {
+    padding: 40px 0 44px;
+  }
+  .avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+  .headline {
+    font-size: 1.15rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  /* Terminal cursor: this site is written from work sessions in a terminal. */
+  .cursor {
+    display: inline-block;
+    width: 0.55ch;
+    height: 1em;
+    margin-left: 8px;
+    background: var(--accent);
+    vertical-align: -0.12em;
+    animation: blink 1.15s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .location {
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+  .bio {
+    max-width: 60ch;
+    margin-bottom: 18px;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.92rem;
+    margin-bottom: 20px;
+  }
+  .stats {
+    display: flex;
+    gap: 22px;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+  .stats strong {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

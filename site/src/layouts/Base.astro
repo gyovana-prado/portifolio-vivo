@@ -1,0 +1,153 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import type { Lang } from '../lib/content';
+import { ui } from '../lib/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Optional schema.org JSON-LD object, rendered in <head>. */
+  jsonLd?: Record<string, unknown>;
+}
+
+const { lang, title, description, jsonLd } = Astro.props;
+const strings = ui[lang];
+
+// The "other language" URL for the switcher, and this language's home.
+const altHref = lang === 'en' ? '/pt/' : '/';
+const base = lang === 'en' ? '/' : '/pt/';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL('/', Astro.site)} />
+    <link rel="alternate" hreflang="pt" href={new URL('/pt/', Astro.site)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="Feed" href={new URL('/rss.xml', Astro.site)} />
+    <!-- Continuidade: cross-fade between EN/PT instead of a hard reload. -->
+    <ClientRouter />
+    <!-- Gate for reveal animations: without JS, .reveal styles never apply. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <nav class="topbar">
+      <div class="wrap topbar-inner">
+        <div class="nav-links">
+          <a href={`${base}#now`}>{strings.now}</a>
+          <a href={`${base}#feed`}>{strings.feed}</a>
+          <a href={`${base}#projects`}>{strings.projects}</a>
+          <a href={`${base}#experience`}>{strings.experience}</a>
+        </div>
+        <a class="lang-switch" href={altHref}>{strings.switchLang}</a>
+      </div>
+    </nav>
+    <main class="wrap">
+      <slot />
+    </main>
+    <footer class="wrap site-footer">
+      <span class="faint">
+        Built with the <a href="https://github.com/gyovana-prado/portifolio-vivo">Living Portfolio</a> engine.
+      </span>
+    </footer>
+
+    <!-- Respiração: reveal .reveal elements as they enter the viewport, with a
+         small stagger per batch. Inline so it can never fail to load; re-runs
+         after every view transition via astro:page-load. -->
+    <script is:inline>
+      (function () {
+        function initReveal() {
+          var els = Array.prototype.slice.call(
+            document.querySelectorAll('.reveal:not(.in-view)')
+          );
+          if (!els.length) return;
+          var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (!('IntersectionObserver' in window) || reduced) {
+            els.forEach(function (el) { el.classList.add('in-view'); });
+            return;
+          }
+          var io = new IntersectionObserver(
+            function (entries) {
+              var batch = 0;
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.style.transitionDelay =
+                  Math.min(batch++ * 70, 490) + 'ms';
+                entry.target.classList.add('in-view');
+                io.unobserve(entry.target);
+              });
+            },
+            { rootMargin: '0px 0px -10% 0px' }
+          );
+          els.forEach(function (el) { io.observe(el); });
+        }
+        document.addEventListener('astro:page-load', initReveal);
+        if (document.readyState !== 'loading') initReveal();
+        else document.addEventListener('DOMContentLoaded', initReveal);
+      })();
+    </script>
+
+    <style>
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(11, 12, 14, 0.82);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        font-size: 0.8rem;
+      }
+      .nav-links a {
+        color: var(--text-dim);
+        transition: color 0.15s ease-out;
+      }
+      .nav-links a:hover {
+        color: var(--text);
+        text-decoration: none;
+      }
+      .lang-switch {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 4px 12px;
+      }
+      .lang-switch:hover {
+        color: var(--text);
+        text-decoration: none;
+        border-color: var(--accent-dim);
+      }
+      .site-footer {
+        padding: 40px 24px 60px;
+        font-size: 0.8rem;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+      }
+    </style>
+  </body>
+</html>

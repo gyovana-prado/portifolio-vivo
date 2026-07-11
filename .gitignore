@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Astro build output
+site/dist/
+site/.astro/
+
+# Python / uv
+mcp/.venv/
+__pycache__/
+*.pyc
+.python-version
+.pytest_cache/
+
+# Claude Code local state (machine-specific permissions)
+.claude/settings.local.json
+
+# Local, never-committed config (secrets & denylist live outside the repo)
+.env
+.env.*
+*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

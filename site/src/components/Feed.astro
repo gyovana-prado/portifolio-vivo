@@ -1,0 +1,125 @@
+---
+import type { Lang, FeedEntry } from '../lib/content';
+import { t } from '../lib/content';
+import { ui, typeBadge } from '../lib/ui';
+import { md } from '../lib/md';
+import { formatDate } from '../lib/dates';
+
+interface Props {
+  lang: Lang;
+  entries: FeedEntry[];
+}
+
+const { lang, entries } = Astro.props;
+const strings = ui[lang];
+---
+
+<section id="feed" class="reveal">
+  <h2 class="section-title">{strings.feed}</h2>
+
+  {entries.length === 0 ? (
+    <p class="faint">{strings.feedEmpty}</p>
+  ) : (
+    <ol class="feed-list">
+      {entries.map((entry) => (
+        <li class="entry reveal" id={`feed-${entry.id}`}>
+          <div class="entry-head">
+            <span class={`badge ${entry.type}`}>{typeBadge[lang][entry.type]}</span>
+            <a class="permalink" href={`#feed-${entry.id}`} title="#">
+              <time class="faint" datetime={entry.date}>{formatDate(entry.date, lang)}</time>
+            </a>
+          </div>
+          <p class="narrative">{t(entry.narrative, lang)}</p>
+          {entry.outcome && (
+            <p class="outcome"><span class="faint">{strings.outcome}:</span> {t(entry.outcome, lang)}</p>
+          )}
+          <details>
+            <summary>{strings.technicalDetail}</summary>
+            <div class="prose technical" set:html={md(t(entry.technical, lang))} />
+          </details>
+          <div class="tags">
+            {entry.tags.map((tag) => <span class="tag">{tag}</span>)}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )}
+</section>
+
+<style>
+  .feed-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .entry {
+    border-left: 2px solid var(--border);
+    padding-left: 18px;
+  }
+  /* Traço: the timeline draws itself in accent as you scroll — a log being
+     written in front of you. Scroll-driven CSS only; where unsupported, the
+     static border above is all you see. */
+  @supports (animation-timeline: view()) {
+    .entry {
+      position: relative;
+    }
+    .entry::before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: var(--accent-dim);
+      transform-origin: top;
+      animation: draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 45%;
+    }
+  }
+  @keyframes draw {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .entry::before {
+      animation: none;
+    }
+  }
+  .entry-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  time {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+  }
+  .permalink {
+    color: inherit;
+  }
+  .permalink:hover time {
+    color: var(--accent);
+  }
+  .narrative {
+    margin-bottom: 8px;
+  }
+  .outcome {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .technical {
+    margin-top: 10px;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+</style>

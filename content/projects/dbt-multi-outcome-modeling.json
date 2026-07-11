@@ -1,0 +1,18 @@
+{
+  "id": "dbt-multi-outcome-modeling",
+  "featured": false,
+  "title": {
+    "en": "Multi-Outcome Journey Modeling in dbt",
+    "pt": "Modelagem de Jornada Multi-Desfecho em dbt"
+  },
+  "summary": {
+    "en": "Redesigned a data model whose original shape couldn't represent multiple outcomes per user journey, using data-warehouse modeling concepts to make it concise and scalable.",
+    "pt": "Redesenhei um modelo de dados cuja forma original não conseguia representar múltiplos desfechos por jornada de usuário, usando conceitos de modelagem de data warehouse para torná-lo conciso e escalável."
+  },
+  "case_study": {
+    "en": "The existing model assumed a single outcome per journey, which broke down as the business needed to track several. I identified the structural limitation, then proposed and implemented a restructured dbt model aligned with the business rules — trading a rigid, hard-to-extend shape for one that stays concise as new outcomes are added.",
+    "pt": "O modelo existente assumia um único desfecho por jornada, o que quebrava à medida que o negócio precisava rastrear vários. Identifiquei a limitação estrutural e então propus e implementei um modelo dbt reestruturado, alinhado às regras de negócio — trocando uma forma rígida e difícil de estender por uma que permanece concisa conforme novos desfechos são adicionados."
+  },
+  "stack": ["dbt", "bigquery", "sql"],
+  "period": { "start": "2023-01", "end": "2023-06" }
+}

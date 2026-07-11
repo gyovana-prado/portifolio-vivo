@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "cv.schema.json",
+  "title": "CV",
+  "description": "Single source of truth for the résumé. The site renders it; a future export_cv tool can generate a PDF. content/cv.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "organization", "period", "summary"],
+        "properties": {
+          "role": { "$ref": "bilingual.schema.json" },
+          "organization": { "type": "string", "minLength": 1 },
+          "location": { "$ref": "bilingual.schema.json" },
+          "period": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["start"],
+            "properties": {
+              "start": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+              "end": {
+                "anyOf": [
+                  { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+                  { "type": "null" }
+                ]
+              }
+            }
+          },
+          "summary": { "$ref": "bilingual.schema.json" },
+          "highlights": {
+            "type": "array",
+            "items": { "$ref": "bilingual.schema.json" }
+          }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "items"],
+        "properties": {
+          "category": { "$ref": "bilingual.schema.json" },
+          "items": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["degree", "institution", "period"],
+        "properties": {
+          "degree": { "$ref": "bilingual.schema.json" },
+          "institution": { "type": "string", "minLength": 1 },
+          "period": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["start"],
+            "properties": {
+              "start": { "type": "string", "pattern": "^[0-9]{4}(-[0-9]{2})?$" },
+              "end": {
+                "anyOf": [
+                  { "type": "string", "pattern": "^[0-9]{4}(-[0-9]{2})?$" },
+                  { "type": "null" }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "issuer"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "issuer": { "type": "string", "minLength": 1 },
+          "date": { "type": "string", "pattern": "^[0-9]{4}(-[0-9]{2})?$" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["language", "level"],
+        "properties": {
+          "language": { "$ref": "bilingual.schema.json" },
+          "level": { "$ref": "bilingual.schema.json" }
+        }
+      }
+    },
+    "awards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title"],
+        "properties": {
+          "title": { "$ref": "bilingual.schema.json" },
+          "issuer": { "type": "string" },
+          "date": { "type": "string", "pattern": "^[0-9]{4}(-[0-9]{2})?$" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+name: CI
+
+# The content quality gate: a missing translation or malformed entry fails the
+# build, by design. Runs on every push/PR to the production branch.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Validate content
+        run: uv run --project mcp python mcp/validate_content.py
+
+      - name: MCP server tests
+        run: uv run --project mcp pytest -q
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install site deps
+        run: cd site && npm ci
+
+      - name: Build site
+        run: cd site && npm run build

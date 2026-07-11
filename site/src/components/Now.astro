@@ -1,0 +1,77 @@
+---
+import type { Lang, Now } from '../lib/content';
+import { t } from '../lib/content';
+import { ui } from '../lib/ui';
+import { formatDate } from '../lib/dates';
+
+interface Props {
+  lang: Lang;
+  now: Now | null;
+}
+
+const { lang, now } = Astro.props;
+const strings = ui[lang];
+---
+
+{now && now.items.length > 0 && (
+  <section id="now" class="reveal">
+    <div class="section-head">
+      <h2 class="section-title">{strings.now}</h2>
+      <span class="faint updated">{strings.updated} {formatDate(now.updated, lang)}</span>
+    </div>
+    <ul class="now-list">
+      {now.items.map((item) => <li>{t(item, lang)}</li>)}
+    </ul>
+  </section>
+)}
+
+<style>
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .updated {
+    font-size: 0.75rem;
+    font-family: var(--mono);
+  }
+  /* Pulso: a discreet live indicator next to the freshness date. */
+  .updated::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 7px;
+    vertical-align: 1px;
+    animation: pulse 2.8s ease-out infinite;
+  }
+  .now-list {
+    list-style: none;
+  }
+  .now-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+  }
+  /* Pulso: the heartbeat of the site — "this is happening now". */
+  .now-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2.8s ease-out infinite;
+  }
+  .now-list li:nth-child(2)::before { animation-delay: 0.4s; }
+  .now-list li:nth-child(3)::before { animation-delay: 0.8s; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(122, 162, 247, 0.5); }
+    60% { box-shadow: 0 0 0 7px rgba(122, 162, 247, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(122, 162, 247, 0); }
+  }
+</style>

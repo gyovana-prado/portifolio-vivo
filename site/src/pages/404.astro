@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="en" title="404 — Not found" description="Page not found">
+  <section class="notfound">
+    <h1>404</h1>
+    <p class="muted">This page doesn't exist. · Esta página não existe.</p>
+    <p class="links">
+      <a href="/">← Home</a>
+      <a href="/pt/">Português</a>
+    </p>
+  </section>
+
+  <style>
+    .notfound {
+      border-top: none;
+      padding: 96px 0;
+      text-align: center;
+    }
+    h1 {
+      font-size: 4rem;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</Base>

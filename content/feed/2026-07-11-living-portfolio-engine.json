@@ -1,0 +1,19 @@
+{
+  "id": "2026-07-11-living-portfolio-engine",
+  "date": "2026-07-11",
+  "type": "shipped",
+  "tags": ["astro", "mcp", "python", "claude-code", "i18n"],
+  "narrative": {
+    "en": "Shipped the engine behind this very site: a bilingual portfolio whose content is curated automatically from real work sessions. A session-end hook evaluates each Claude Code session against a relevance rubric; when something clears the bar, it is written up in two languages, sanitized, and committed as a draft that publishes with one command.",
+    "pt": "Entreguei o motor por trás deste exato site: um portfólio bilíngue cujo conteúdo é curado automaticamente a partir de sessões reais de trabalho. Um hook de fim de sessão avalia cada sessão do Claude Code contra um rubric de relevância; quando algo passa na régua, é escrito em dois idiomas, sanitizado e commitado como rascunho que publica com um comando."
+  },
+  "technical": {
+    "en": "Three components: an Astro static site (i18n EN/PT, feed/projects/CV rendered from JSON at build time), a Python MCP server exposing five tools (`log_activity`, `review_and_publish`, `add_project`, `update_now`, `get_portfolio_state`) that write through the GitHub Contents API, and a Stop hook that embeds the rubric verbatim so criteria changes require no code changes. Validation runs three layers deep: JSON Schema, bilingual completeness (a missing translation fails the build, by design), and a local denylist as a deterministic backstop behind the LLM's category-based sanitization.",
+    "pt": "Três componentes: um site estático em Astro (i18n EN/PT, feed/projetos/CV renderizados de JSON no build), um servidor MCP em Python expondo cinco tools (`log_activity`, `review_and_publish`, `add_project`, `update_now`, `get_portfolio_state`) que escrevem pela API de Contents do GitHub, e um hook de Stop que embute o rubric verbatim — mudar critérios não exige mudar código. A validação tem três camadas: JSON Schema, completude bilíngue (tradução faltando quebra o build, de propósito) e uma denylist local como retaguarda determinística atrás da sanitização por categoria do LLM."
+  },
+  "outcome": {
+    "en": "The site you are reading was produced by this pipeline.",
+    "pt": "O site que você está lendo foi produzido por esse pipeline."
+  },
+  "status": "published"
+}

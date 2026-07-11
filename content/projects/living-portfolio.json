@@ -1,0 +1,24 @@
+{
+  "id": "living-portfolio",
+  "featured": true,
+  "title": {
+    "en": "Living Portfolio",
+    "pt": "Portfólio Vivo"
+  },
+  "summary": {
+    "en": "A portfolio that updates itself: a static Astro site whose content is curated automatically from real work sessions through an MCP publishing pipeline.",
+    "pt": "Um portfólio que se atualiza sozinho: um site estático em Astro cujo conteúdo é curado automaticamente a partir de sessões reais de trabalho, através de um pipeline de publicação via MCP."
+  },
+  "case_study": {
+    "en": "The problem: personal sites go stale because keeping them updated is a chore. The idea: a session-end hook evaluates each Claude Code session against a relevance rubric; when the work is portfolio-worthy, an LLM writes it up in two layers (narrative + technical) and two languages (EN/PT), sanitizes client-confidential details by category, and commits it to a `drafts` branch. The owner publishes with one command. The site is a static build — 'aliveness' comes from the content pipeline, not a running server. Git is the database: every change is a commit, giving full history and zero infra cost.",
+    "pt": "O problema: sites pessoais envelhecem porque mantê-los atualizados é um trabalho que ninguém sustenta. A ideia: um hook de fim de sessão avalia cada sessão do Claude Code contra um rubric de relevância; quando o trabalho vale para o portfólio, um LLM o escreve em duas camadas (narrativa + técnica) e dois idiomas (EN/PT), sanitiza detalhes confidenciais de clientes por categoria e commita numa branch `drafts`. O dono publica com um comando. O site é um build estático — a 'vida' vem do pipeline de conteúdo, não de um servidor rodando. O git é o banco de dados: cada mudança é um commit, com histórico completo e custo de infra zero."
+  },
+  "stack": ["astro", "typescript", "python", "mcp", "claude-code", "github-actions"],
+  "links": {
+    "repo": "https://github.com/gyovana-prado/portifolio-vivo"
+  },
+  "period": {
+    "start": "2026-07",
+    "end": null
+  }
+}

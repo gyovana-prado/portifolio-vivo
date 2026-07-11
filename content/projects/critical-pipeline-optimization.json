@@ -1,0 +1,18 @@
+{
+  "id": "critical-pipeline-optimization",
+  "featured": false,
+  "title": {
+    "en": "Critical Pipeline Optimization (88% Faster)",
+    "pt": "Otimização de Pipeline Crítico (88% Mais Rápido)"
+  },
+  "summary": {
+    "en": "A materialized table was timing out. Modularization and modeling best practices cut its execution time by up to 88%.",
+    "pt": "Uma tabela materializada estava estourando timeout. Modularização e boas práticas de modelagem cortaram seu tempo de execução em até 88%."
+  },
+  "case_study": {
+    "en": "A critical materialized table had grown to the point of timing out. I broke the monolithic transformation into modular steps and applied dbt best practices, reducing execution time by up to 88% and removing the timeouts. I also used AI-assisted techniques (prompt engineering and in-context learning) to speed up the investigation and validate candidate refactors.",
+    "pt": "Uma tabela materializada crítica havia crescido a ponto de estourar timeout. Quebrei a transformação monolítica em passos modulares e apliquei boas práticas de dbt, reduzindo o tempo de execução em até 88% e eliminando os timeouts. Também usei técnicas assistidas por IA (prompt engineering e in-context learning) para acelerar a investigação e validar as refatorações candidatas."
+  },
+  "stack": ["dbt", "bigquery", "sql", "prompt-engineering"],
+  "period": { "start": "2023-06", "end": "2023-09" }
+}

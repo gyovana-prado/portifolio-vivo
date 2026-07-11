@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "profile.schema.json",
+  "title": "Profile",
+  "description": "Name, headline, links, avatar. content/profile.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "headline", "links"],
+  "properties": {
+    "name": { "type": "string", "minLength": 1 },
+    "headline": { "$ref": "bilingual.schema.json" },
+    "bio": { "$ref": "bilingual.schema.json" },
+    "location": { "$ref": "bilingual.schema.json" },
+    "avatar": { "type": "string" },
+    "github_username": { "type": "string" },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "url"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "url": { "type": "string", "format": "uri" },
+          "icon": { "type": "string" }
+        }
+      }
+    }
+  }
+}

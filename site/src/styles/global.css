@@ -1,0 +1,201 @@
+:root {
+  --bg: #0b0c0e;
+  --bg-elev: #131519;
+  --border: #23262c;
+  --text: #e8eaed;
+  --text-dim: #9aa0a8;
+  --text-faint: #828993;
+  --accent: #7aa2f7;
+  --accent-dim: #3d4b6e;
+  --radius: 10px;
+  --maxw: 720px;
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Feed type accents */
+  --t-decision: #bb9af7;
+  --t-problem-solved: #7dcfff;
+  --t-shipped: #9ece6a;
+  --t-learning: #e0af68;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Resposta: underline that slides in instead of popping (content links only —
+   the nav pill has its own hover). */
+main a,
+.site-footer a {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.2s ease-out;
+}
+main a:hover,
+.site-footer a:hover {
+  background-size: 100% 1px;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+section {
+  padding: 44px 0;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 52px; /* clears the sticky topbar on anchor jumps */
+}
+
+.section-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--text-dim);
+}
+.faint {
+  color: var(--text-faint);
+}
+
+.tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  transition: translate 0.15s ease-out, border-color 0.15s ease-out;
+}
+.tag:hover {
+  translate: 0 -1px;
+  border-color: var(--accent-dim);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.badge.decision { color: var(--t-decision); }
+.badge.problem-solved { color: var(--t-problem-solved); }
+.badge.shipped { color: var(--t-shipped); }
+.badge.learning { color: var(--t-learning); }
+
+details > summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.85rem;
+  list-style: none;
+  user-select: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details > summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 6px;
+  transition: rotate 0.2s ease-out;
+}
+details[open] > summary::before {
+  rotate: 90deg;
+}
+
+/* Expanded content fades up (progressive enhancement — ::details-content is
+   Chromium 131+; elsewhere the toggle is instant, as before). */
+details::details-content {
+  opacity: 0;
+  translate: 0 -4px;
+  transition:
+    opacity 0.25s ease-out,
+    translate 0.25s ease-out,
+    content-visibility 0.25s allow-discrete;
+}
+details[open]::details-content {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.prose p { margin-bottom: 0.8em; }
+.prose p:last-child { margin-bottom: 0; }
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--bg-elev);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Respiração: elements fade up as they enter the viewport. Gated behind the
+   `js` class (set inline in <head>) so content is never hidden without the
+   observer that reveals it. The observer staggers batches via transition-delay. */
+html.js .reveal {
+  opacity: 0;
+  translate: 0 12px;
+  transition: opacity 0.45s ease-out, translate 0.45s ease-out;
+}
+html.js .reveal.in-view {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js .reveal {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,174 @@
+---
+import type { Lang, CV } from '../lib/content';
+import { t } from '../lib/content';
+import { ui } from '../lib/ui';
+import { formatPeriod, formatYM } from '../lib/dates';
+
+interface Props {
+  lang: Lang;
+  cv: CV;
+}
+
+const { lang, cv } = Astro.props;
+const strings = ui[lang];
+
+function period(p: { start: string; end: string | null }): string {
+  return formatPeriod(p, lang, strings.present);
+}
+---
+
+{cv.experience && cv.experience.length > 0 && (
+  <section id="experience" class="reveal">
+    <h2 class="section-title">{strings.experience}</h2>
+    <div class="items">
+      {cv.experience.map((job) => (
+        <article class="job reveal">
+          <div class="row">
+            <h3>{t(job.role, lang)} · <span class="org">{job.organization}</span></h3>
+            <span class="faint period">{period(job.period)}</span>
+          </div>
+          {job.location && <p class="faint loc">{t(job.location, lang)}</p>}
+          <p class="muted">{t(job.summary, lang)}</p>
+          {job.highlights && job.highlights.length > 0 && (
+            <ul class="highlights">
+              {job.highlights.map((h) => <li>{t(h, lang)}</li>)}
+            </ul>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+{cv.skills && cv.skills.length > 0 && (
+  <section id="skills" class="reveal">
+    <h2 class="section-title">{strings.skills}</h2>
+    <div class="skill-groups">
+      {cv.skills.map((group) => (
+        <div class="skill-group">
+          <span class="skill-cat">{t(group.category, lang)}</span>
+          <div class="tags">
+            {group.items.map((s) => <span class="tag">{s}</span>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+{cv.education && cv.education.length > 0 && (
+  <section id="education" class="reveal">
+    <h2 class="section-title">{strings.education}</h2>
+    <div class="items">
+      {cv.education.map((ed) => (
+        <div class="row">
+          <span>{t(ed.degree, lang)} · <span class="org">{ed.institution}</span></span>
+          <span class="faint period">{period(ed.period)}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+{cv.certifications && cv.certifications.length > 0 && (
+  <section id="certifications" class="reveal">
+    <h2 class="section-title">{strings.certifications}</h2>
+    <div class="items">
+      {cv.certifications.map((c) => (
+        <div class="row">
+          <span>{c.url ? <a href={c.url} target="_blank" rel="noopener">{c.name}</a> : c.name} · <span class="org">{c.issuer}</span></span>
+          {c.date && <span class="faint period">{formatYM(c.date, lang)}</span>}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+{cv.languages && cv.languages.length > 0 && (
+  <section id="languages" class="reveal">
+    <h2 class="section-title">{strings.languages}</h2>
+    <div class="items">
+      {cv.languages.map((l) => (
+        <div class="row">
+          <span>{t(l.language, lang)}</span>
+          <span class="faint">{t(l.level, lang)}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+{cv.awards && cv.awards.length > 0 && (
+  <section id="awards" class="reveal">
+    <h2 class="section-title">{strings.awards}</h2>
+    <div class="items">
+      {cv.awards.map((a) => (
+        <div class="row">
+          <span>{t(a.title, lang)}{a.issuer && <span class="org"> · {a.issuer}</span>}</span>
+          {a.date && <span class="faint period">{formatYM(a.date, lang)}</span>}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .job .row {
+    margin-bottom: 2px;
+  }
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  h3 {
+    font-size: 1rem;
+  }
+  .org {
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+  .period {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  .loc {
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+  }
+  .highlights {
+    margin-top: 8px;
+    padding-left: 18px;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+  }
+  .highlights li {
+    margin-bottom: 4px;
+  }
+  .skill-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .skill-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .skill-cat {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+</style>

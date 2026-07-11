@@ -1,0 +1,21 @@
+{
+  "name": "Gyovana Santos do Prado",
+  "headline": {
+    "en": "Data & AI Engineer — Human in the Loop",
+    "pt": "Engenheira de Dados & IA — Human in the Loop"
+  },
+  "bio": {
+    "en": "Data & AI Engineer with 9 years in tech, focused on building scalable data pipelines and designing AI systems where human judgment stays in the loop. Specialist in dbt, BigQuery, and GCP, with hands-on experience building Claude-based solutions — custom skills, MCP servers, and API integrations — for enterprise clients. Comfortable with both technical and business stakeholders, and recognized for leading internal training and data democratization.",
+    "pt": "Engenheira de Dados & IA com 9 anos em tecnologia, focada em construir pipelines de dados escaláveis e desenhar sistemas de IA onde o julgamento humano permanece no circuito. Especialista em dbt, BigQuery e GCP, com experiência prática construindo soluções baseadas em Claude — skills customizadas, servidores MCP e integrações de API — para clientes enterprise. À vontade tanto com stakeholders técnicos quanto de negócio, e reconhecida por liderar treinamentos internos e democratização de dados."
+  },
+  "location": {
+    "en": "São Paulo, Brazil",
+    "pt": "São Paulo, Brasil"
+  },
+  "github_username": "gyovana-prado",
+  "links": [
+    { "label": "GitHub", "url": "https://github.com/gyovana-prado", "icon": "github" },
+    { "label": "LinkedIn", "url": "https://linkedin.com/in/gyovana-prado", "icon": "linkedin" },
+    { "label": "Email", "url": "mailto:gyovana.sprado@gmail.com", "icon": "mail" }
+  ]
+}
