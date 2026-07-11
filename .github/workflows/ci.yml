@@ -40,3 +40,19 @@ jobs:
 
       - name: Build site
         run: cd site && npm run build
+        env:
+          SITE_URL: https://portifolio-vivo.pages.dev
+          # Raises the GitHub API rate limit for build-time stats.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Publish to Cloudflare Pages — only on push to main, never for PRs or
+      # the drafts branch. Requires the CLOUDFLARE_API_TOKEN repo secret
+      # (scoped to Pages Edit on the single account).
+      - name: Deploy to Cloudflare Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 4e583729cbc47c301550c66e286da35e
+          workingDirectory: site
+          command: pages deploy dist --project-name=portifolio-vivo
