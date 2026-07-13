@@ -47,9 +47,15 @@ The session transcript (JSONL, one event per line) is at:
 
   {transcript}
 
-It may be long. Read it strategically: user messages and the assistant's final
-summaries tell you what was actually accomplished — Grep for keywords and Read
-targeted ranges instead of the whole file.
+It may be long, and long sessions usually contain SEVERAL work streams — do not
+judge by the opening topic. Cover the whole span before concluding:
+
+- Check the size first (`Grep` with count, or Read with offsets), then sample
+  the beginning, middle and END of the file. The most substantive work is often
+  in the second half.
+- Grep for markers of substance across the file: `git commit`, `feat:`, `fix:`,
+  `decision`, `decisão`, `trade-off`, `bug`, `measured`, `medido`.
+- Evaluate the BEST candidate story in the session, not the first one you see.
 
 Then decide whether the session produced anything portfolio-worthy. Most
 sessions produce NOTHING — that is the correct and common outcome. Do not pad
