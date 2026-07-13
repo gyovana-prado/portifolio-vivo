@@ -1,0 +1,32 @@
+{
+  "id": "rotas-sp",
+  "featured": true,
+  "title": {
+    "en": "Rotas-SP — transit routing that thinks past the obvious",
+    "pt": "Rotas-SP — rotas de transporte que pensam além do óbvio"
+  },
+  "summary": {
+    "en": "A public-transit route planner for São Paulo that generates structurally different alternatives (walk to a terminal, take the farther station), classifies how safe each transfer is, and uses an LLM to rank and explain them by the priority the user picks at query time.",
+    "pt": "Um planejador de rotas de transporte público para São Paulo que gera alternativas estruturalmente diferentes (ir a pé até um terminal, pegar a estação mais distante), classifica quão segura é cada baldeação e usa um LLM para ranquear e explicar as opções conforme a prioridade que o usuário escolhe na hora da consulta)."
+  },
+  "case_study": {
+    "en": "The hard part isn't drawing a route — off-the-shelf APIs do that. It's surfacing the *good* alternative a normal app never shows. The engine runs a self-hosted OpenTripPlanner over São Paulo's GTFS/OSM data and does a parameter sweep: several routing queries with different cost functions (anti-walking, pro-walking-fewer-transfers, rail-only) whose union produces genuinely diverse candidates. A precomputed index classifies each transfer as terminal / station / street, and a deterministic profile-based scorer ranks them before an LLM re-ranks the top options and writes plain-language justifications — with a strict rule to only cite numbers present in the data. Spec-first: the whole system was documented before a line of code, so the implementation surfaced only small, well-isolated divergences (a regex bug, a latency budget that didn't survive the real graph — each measured and fixed). Phase 1 is a CLI with 74 tests; phase 2 is an API + PWA reusing the same engine.",
+    "pt": "O difícil não é traçar uma rota — APIs prontas fazem isso. É revelar a *boa* alternativa que um app comum nunca mostra. O motor roda um OpenTripPlanner próprio sobre os dados GTFS/OSM de São Paulo e faz um sweep de parâmetros: várias consultas de roteamento com funções de custo diferentes (anti-caminhada, pró-caminhada-menos-baldeação, só-trilhos) cuja união produz candidatas genuinamente diversas. Um índice pré-computado classifica cada baldeação como terminal / estação / rua, e um scorer determinístico por perfil as ordena antes de um LLM reordenar as melhores opções e escrever justificativas em linguagem natural — com a regra estrita de só citar números presentes nos dados. Spec-first: o sistema inteiro foi documentado antes de uma linha de código, então a implementação expôs só divergências pequenas e isoladas (um bug de regex, um orçamento de latência que não sobreviveu ao grafo real — cada uma medida e corrigida). A fase 1 é um CLI com 74 testes; a fase 2 é uma API + PWA reaproveitando o mesmo motor."
+  },
+  "stack": [
+    "python",
+    "opentripplanner",
+    "gtfs",
+    "osm",
+    "docker",
+    "typer",
+    "pydantic",
+    "esperanto",
+    "claude-code"
+  ],
+  "links": {},
+  "period": {
+    "start": "2026-07",
+    "end": null
+  }
+}
