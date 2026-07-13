@@ -1,0 +1,25 @@
+{
+  "id": "2026-07-10-claude-code-cli-as-llm-provider",
+  "date": "2026-07-10",
+  "type": "problem-solved",
+  "tags": [
+    "llm-integration",
+    "subprocess",
+    "transit-routing",
+    "bug-fix",
+    "zero-cost"
+  ],
+  "narrative": {
+    "en": "Needed AI-powered route re-ranking for a personal transit app but had no API key — only a Claude Code subscription. Built a zero-cost LLM integration by calling the Claude CLI in headless mode via subprocess. Hit a non-obvious bug: global session hooks were being inherited by the subprocess, injecting evaluation text into the JSON output and silently corrupting every response. Traced the corruption, found the root cause, and fixed it with a single flag.",
+    "pt": "Precisava de reranqueamento de rotas com IA para um projeto pessoal de planejamento de transporte, mas sem chave de API — apenas uma assinatura Claude Code. Construí uma integração LLM de custo zero chamando o CLI do Claude em modo headless via subprocess. Deparei com um bug não óbvio: os hooks globais de sessão eram herdados pelo subprocess, injetando texto de avaliação na saída JSON e corrompendo silenciosamente cada resposta. Rastreei a corrupção, encontrei a causa raiz e corrigi com uma única flag."
+  },
+  "technical": {
+    "en": "- Stack: Python + `subprocess`, Claude Code CLI (`claude -p --output-format json`)\n- Added `ROTAS_LLM_PROVIDER=claude-code` provider alongside the existing API-based path, so both can coexist\n- Root cause: global Stop hooks (used for portfolio session evaluation) were inherited by the headless CLI child process, appending their evaluation output to the `result` field and breaking JSON parsing downstream\n- Fix: `--settings '{\"disableAllHooks\": true}'` passed to the subprocess invocation\n- JSON parser made tolerant of surrounding markdown prose as a defensive measure against future prompt drift\n- Trade-off accepted: ~95s per query vs 5-10s with a real API key — cost-zero outweighs latency for a personal prototype; UX shows a 'slow AI' warning\n- Acceptance criteria met: 6/6 itinerary IDs correct, justifications ≤280 chars, contextual re-ranking correctly inverted priority order and flagged a late-night street transfer as eliminatory",
+    "pt": "- Stack: Python + `subprocess`, Claude Code CLI (`claude -p --output-format json`)\n- Adicionado provider `ROTAS_LLM_PROVIDER=claude-code` ao lado do caminho baseado em API existente, para coexistência\n- Causa raiz: hooks globais de Stop (usados para avaliação de sessão do portfólio) eram herdados pelo processo filho do CLI headless, acrescentando a saída de avaliação ao campo `result` e quebrando o parsing JSON\n- Correção: `--settings '{\"disableAllHooks\": true}'` passado na chamada do subprocess\n- Parser JSON tornado tolerante a prosa markdown ao redor, como medida defensiva contra deriva de prompt\n- Trade-off aceito: ~95s por consulta vs 5-10s com chave de API real — custo zero supera a latência para um protótipo pessoal; UX exibe aviso de 'IA lenta'\n- Critérios de aceite cumpridos: 6/6 IDs de itinerário corretos, justificativas ≤280 chars, reranqueamento contextual inverteu corretamente a ordem de prioridade e sinalizou uma baldeação noturna como eliminatória"
+  },
+  "outcome": {
+    "en": "M4 milestone complete: AI re-ranking working without an API key; 57 tests green, 6/6 ranking outputs valid.",
+    "pt": "Milestone M4 concluído: reranqueamento com IA funcionando sem chave de API; 57 testes verdes, 6/6 saídas de ranking válidas."
+  },
+  "status": "draft"
+}
