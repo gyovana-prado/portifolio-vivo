@@ -1,52 +1,59 @@
-# Session-end hook
+# Session hooks
 
-`evaluate_session.py` is a Claude Code **Stop** hook. When a session ends, it
-asks the assistant to evaluate the finished work against [`rubric.md`](../rubric.md)
-and — only if it clears the bar — write a feed entry via the portfolio MCP
-`log_activity` tool (which lands on the `drafts` branch, never public).
+Two modes for feeding the portfolio from Claude Code sessions. **Capture +
+drain is the recommended one** — the inline evaluator is kept for reference.
 
-## How it works
+## Recommended: silent capture + deferred evaluation
 
-1. On `Stop`, the hook injects an evaluation prompt with the rubric embedded
-   **verbatim** — so changing the criteria means editing `rubric.md`, not this hook.
-2. The assistant judges the session. Most sessions log nothing (correct behavior).
-3. If worthy, it builds the entry (two layers, two languages, sanitized by
-   category) and calls `log_activity`.
-
-**Loop-safe:** it injects the prompt once; when the assistant finishes the
-evaluation, `stop_hook_active` is true and the hook exits quietly.
-**Fail-safe:** any error exits 0 without blocking — a broken hook never traps you.
-
-## Install
-
-Add the snippet in [`settings.snippet.json`](settings.snippet.json) to your
-Claude Code settings, replacing the path with the absolute path to this file.
-
-- **Everywhere:** `~/.claude/settings.json`
-- **This project only:** `.claude/settings.json` in the repo you want evaluated
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          { "type": "command", "command": "python3 /abs/path/to/portfolio/hooks/evaluate_session.py" }
-        ]
-      }
-    ]
-  }
-}
-```
-
-The hook needs the portfolio MCP server connected (see [`../mcp/README.md`](../mcp/README.md))
-for `log_activity` to be callable. Without it, the assistant reports what it
-*would* have logged and stops.
-
-## Test
+- [`capture_session.py`](capture_session.py) — a **Stop** hook that never
+  blocks and never prints: it just records `{session_id, transcript_path, cwd,
+  last_stop}` in `~/.claude/portfolio/queue.jsonl` (one line per session,
+  deduped). Zero conversation noise.
+- [`drain_queue.py`](drain_queue.py) — evaluates the queue **out of band**:
+  for each pending session it spawns a headless `claude -p` that reads the
+  transcript, judges it against [`rubric.md`](../rubric.md) (embedded verbatim)
+  and, only if it clears the bar, logs a **draft** via the portfolio MCP
+  `log_activity`. Run it when you want:
 
 ```bash
-echo '{"stop_hook_active": false}' | python3 hooks/evaluate_session.py   # → blocks, injects rubric
-echo '{"stop_hook_active": true}'  | python3 hooks/evaluate_session.py   # → empty (loop guard)
+make drain                              # evaluate everything pending
+python3 hooks/drain_queue.py --dry-run  # see what's queued
+python3 hooks/drain_queue.py --limit 1  # evaluate just one
 ```
+
+Nothing is ever published by automation: drafts land on the `drafts` branch
+and only `review_and_publish` (you, on the site/MCP) promotes them to `main`.
+
+Implementation notes learned the hard way:
+
+- Headless sessions run with `--settings '{"disableAllHooks": true}'`. A global
+  Stop hook would hijack the `result` field of `claude -p` (the evaluation
+  prompt would replace the model's answer — observed 2026-07-12) and the
+  capture hook would re-enqueue the evaluator's own session, looping forever.
+- The MCP config (including the GitHub token) is read at runtime from the
+  `portfolio` server registered in `~/.claude.json` — no secrets here.
+- The evaluator is instructed to Grep/Read the transcript strategically, not
+  to ingest it whole (transcripts of long sessions are large).
+
+### Install
+
+Add the snippet in [`settings.snippet.json`](settings.snippet.json) to your
+Claude Code settings, replacing the path:
+
+- **Everywhere:** `~/.claude/settings.json`
+- **This project only:** `.claude/settings.json` in the repo you want captured
+
+### Test
+
+```bash
+echo '{"session_id": "teste", "transcript_path": "/tmp/x.jsonl"}' | python3 hooks/capture_session.py
+python3 hooks/drain_queue.py --dry-run   # → "pendente: teste …"
+```
+
+## Legacy: inline evaluation (noisy)
+
+[`evaluate_session.py`](evaluate_session.py) is the original **Stop** hook: it
+blocks at the end of every turn and injects the rubric evaluation into the
+conversation itself. It works, but the evaluation log appears after every
+message — fine for demos, tiring for daily use. Same rubric, same guarantees
+(loop-safe via `stop_hook_active`, fail-safe on errors).

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /ABSOLUTE/PATH/TO/portfolio/hooks/evaluate_session.py"
+            "command": "python3 /ABSOLUTE/PATH/TO/portfolio/hooks/capture_session.py"
           }
         ]
       }

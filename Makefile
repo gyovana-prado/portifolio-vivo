@@ -1,4 +1,4 @@
-.PHONY: help validate build dev preview check test install
+.PHONY: help validate build dev preview check test install drain
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -25,3 +25,6 @@ test: ## Run the MCP server unit tests
 
 check: validate test ## Full local gate: validate content + run tests
 	@echo "✓ All checks passed."
+
+drain: ## Evaluate captured sessions (headless claude -p → drafts via MCP)
+	python3 hooks/drain_queue.py
