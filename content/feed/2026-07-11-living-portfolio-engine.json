@@ -2,7 +2,13 @@
   "id": "2026-07-11-living-portfolio-engine",
   "date": "2026-07-11",
   "type": "shipped",
-  "tags": ["astro", "mcp", "python", "claude-code", "i18n"],
+  "tags": [
+    "astro",
+    "mcp",
+    "python",
+    "claude-code",
+    "i18n"
+  ],
   "narrative": {
     "en": "Shipped the engine behind this very site: a bilingual portfolio whose content is curated automatically from real work sessions. A session-end hook evaluates each Claude Code session against a relevance rubric; when something clears the bar, it is written up in two languages, sanitized, and committed as a draft that publishes with one command.",
     "pt": "Entreguei o motor por trás deste exato site: um portfólio bilíngue cujo conteúdo é curado automaticamente a partir de sessões reais de trabalho. Um hook de fim de sessão avalia cada sessão do Claude Code contra um rubric de relevância; quando algo passa na régua, é escrito em dois idiomas, sanitizado e commitado como rascunho que publica com um comando."
@@ -15,5 +21,6 @@
     "en": "The site you are reading was produced by this pipeline.",
     "pt": "O site que você está lendo foi produzido por esse pipeline."
   },
+  "project": "living-portfolio",
   "status": "published"
 }

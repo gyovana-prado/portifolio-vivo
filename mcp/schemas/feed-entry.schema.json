@@ -29,6 +29,11 @@
     "narrative": { "$ref": "bilingual.schema.json" },
     "technical": { "$ref": "bilingual.schema.json" },
     "outcome": { "$ref": "bilingual.schema.json" },
+    "project": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Optional id of a project this entry belongs to (content/projects/<id>.json)"
+    },
     "status": {
       "type": "string",
       "enum": ["draft", "published"]

@@ -24,6 +24,9 @@ export const ui = {
     switchLang: 'Português',
     caseStudy: 'Case study',
     skipToContent: 'Skip to content',
+    partOf: 'Part of',
+    filterAll: 'All',
+    filterLabel: 'Filter by type',
   },
   pt: {
     now: 'Agora',
@@ -46,6 +49,9 @@ export const ui = {
     switchLang: 'English',
     caseStudy: 'Estudo de caso',
     skipToContent: 'Pular para o conteúdo',
+    partOf: 'Parte de',
+    filterAll: 'Todos',
+    filterLabel: 'Filtrar por tipo',
   },
 } satisfies Record<Lang, Record<string, string>>;
 

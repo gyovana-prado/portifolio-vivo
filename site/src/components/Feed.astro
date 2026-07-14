@@ -1,5 +1,5 @@
 ---
-import type { Lang, FeedEntry } from '../lib/content';
+import type { Lang, FeedEntry, Project } from '../lib/content';
 import { t } from '../lib/content';
 import { ui, typeBadge } from '../lib/ui';
 import { md } from '../lib/md';
@@ -8,10 +8,19 @@ import { formatDate } from '../lib/dates';
 interface Props {
   lang: Lang;
   entries: FeedEntry[];
+  projects?: Project[];
 }
 
-const { lang, entries } = Astro.props;
+const { lang, entries, projects = [] } = Astro.props;
 const strings = ui[lang];
+
+// id → título do projeto, para o link "parte de <projeto>".
+const projectTitle = new Map(projects.map((p) => [p.id, t(p.title, lang)]));
+
+// Só oferecem filtro os tipos que realmente aparecem no feed (evita chip vazio),
+// na ordem canônica dos badges.
+const ORDER: FeedEntry['type'][] = ['decision', 'problem-solved', 'shipped', 'learning'];
+const presentTypes = ORDER.filter((tp) => entries.some((e) => e.type === tp));
 ---
 
 <section id="feed" class="reveal">
@@ -20,33 +29,118 @@ const strings = ui[lang];
   {entries.length === 0 ? (
     <p class="faint">{strings.feedEmpty}</p>
   ) : (
-    <ol class="feed-list">
-      {entries.map((entry) => (
-        <li class="entry reveal" id={`feed-${entry.id}`}>
-          <div class="entry-head">
-            <span class={`badge ${entry.type}`}>{typeBadge[lang][entry.type]}</span>
-            <a class="permalink" href={`#feed-${entry.id}`} title="#">
-              <time class="faint" datetime={entry.date}>{formatDate(entry.date, lang)}</time>
-            </a>
-          </div>
-          <p class="narrative">{t(entry.narrative, lang)}</p>
-          {entry.outcome && (
-            <p class="outcome"><span class="faint">{strings.outcome}:</span> {t(entry.outcome, lang)}</p>
-          )}
-          <details>
-            <summary>{strings.technicalDetail}</summary>
-            <div class="prose technical" set:html={md(t(entry.technical, lang))} />
-          </details>
-          <div class="tags">
-            {entry.tags.map((tag) => <span class="tag">{tag}</span>)}
-          </div>
-        </li>
-      ))}
-    </ol>
+    <div class="feed-wrap" data-feed>
+      {presentTypes.length > 1 && (
+        <div class="feed-filter" role="group" aria-label={strings.filterLabel}>
+          <button type="button" class="chip active" data-filter="all" aria-pressed="true">
+            {strings.filterAll}
+          </button>
+          {presentTypes.map((tp) => (
+            <button type="button" class={`chip ${tp}`} data-filter={tp} aria-pressed="false">
+              {typeBadge[lang][tp]}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <ol class="feed-list">
+        {entries.map((entry) => (
+          <li class="entry reveal" id={`feed-${entry.id}`} data-type={entry.type}>
+            <div class="entry-head">
+              <span class={`badge ${entry.type}`}>{typeBadge[lang][entry.type]}</span>
+              <a class="permalink" href={`#feed-${entry.id}`} title="#">
+                <time class="faint" datetime={entry.date}>{formatDate(entry.date, lang)}</time>
+              </a>
+              {entry.project && projectTitle.has(entry.project) && (
+                <a class="entry-project" href={`#projects`}>
+                  {strings.partOf} {projectTitle.get(entry.project)}
+                </a>
+              )}
+            </div>
+            <p class="narrative">{t(entry.narrative, lang)}</p>
+            {entry.outcome && (
+              <p class="outcome"><span class="faint">{strings.outcome}:</span> {t(entry.outcome, lang)}</p>
+            )}
+            <details>
+              <summary>{strings.technicalDetail}</summary>
+              <div class="prose technical" set:html={md(t(entry.technical, lang))} />
+            </details>
+            <div class="tags">
+              {entry.tags.map((tag) => <span class="tag">{tag}</span>)}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
   )}
 </section>
 
+<script is:inline>
+  (function () {
+    function initFilter() {
+      var wrap = document.querySelector('[data-feed]');
+      if (!wrap) return;
+      var chips = wrap.querySelectorAll('.chip[data-filter]');
+      var entries = wrap.querySelectorAll('.entry[data-type]');
+      if (!chips.length) return;
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var f = chip.getAttribute('data-filter');
+          chips.forEach(function (c) {
+            var on = c === chip;
+            c.classList.toggle('active', on);
+            c.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          entries.forEach(function (e) {
+            var show = f === 'all' || e.getAttribute('data-type') === f;
+            e.style.display = show ? '' : 'none';
+          });
+        });
+      });
+    }
+    document.addEventListener('astro:page-load', initFilter);
+    if (document.readyState !== 'loading') initFilter();
+    else document.addEventListener('DOMContentLoaded', initFilter);
+  })();
+</script>
+
 <style>
+  /* Filtro por tipo: chips que mostram/escondem entradas no cliente. */
+  .feed-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    color: var(--text-dim);
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 12px;
+    cursor: pointer;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out;
+  }
+  .chip:hover {
+    color: var(--text);
+    border-color: var(--accent-dim);
+  }
+  .chip.active {
+    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .entry-project {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-left: auto;
+  }
+  .entry-project:hover {
+    color: var(--accent);
+  }
   .feed-list {
     list-style: none;
     display: flex;

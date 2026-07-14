@@ -2,7 +2,11 @@
   "id": "2026-07-11-scroll-driven-animations",
   "date": "2026-07-11",
   "type": "learning",
-  "tags": ["css", "scroll-driven-animations", "progressive-enhancement"],
+  "tags": [
+    "css",
+    "scroll-driven-animations",
+    "progressive-enhancement"
+  ],
   "narrative": {
     "en": "First real-world use of CSS scroll-driven animations: this feed's timeline draws itself as you scroll, with zero JavaScript. The motion concept for the site — pulse, trace, breath — had to communicate 'alive' without a single animation library.",
     "pt": "Primeiro uso em produção de scroll-driven animations do CSS: a linha do tempo deste feed se desenha conforme você rola, com zero JavaScript. O conceito de movimento do site — pulso, traço, respiração — precisava comunicar 'vivo' sem nenhuma biblioteca de animação."
@@ -15,5 +19,6 @@
     "en": "Feed timeline draws on scroll in ~20 lines of CSS; zero JS, zero libraries.",
     "pt": "A linha do feed se desenha no scroll em ~20 linhas de CSS; zero JS, zero bibliotecas."
   },
+  "project": "living-portfolio",
   "status": "published"
 }

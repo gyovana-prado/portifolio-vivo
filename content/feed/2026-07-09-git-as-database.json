@@ -2,7 +2,12 @@
   "id": "2026-07-09-git-as-database",
   "date": "2026-07-09",
   "type": "decision",
-  "tags": ["architecture", "static-site", "git", "astro"],
+  "tags": [
+    "architecture",
+    "static-site",
+    "git",
+    "astro"
+  ],
   "narrative": {
     "en": "My portfolio needed to update itself without becoming a server to maintain. The decision: no CMS, no database, no backend — content lives as JSON in a git repository, every update is a commit, and the site is a static build triggered by pushes. A drafts branch acts as a mandatory buffer: automation can write, but nothing goes public without a human merge.",
     "pt": "Meu portfólio precisava se atualizar sozinho sem virar um servidor pra manter. A decisão: sem CMS, sem banco de dados, sem backend — o conteúdo vive como JSON num repositório git, cada atualização é um commit, e o site é um build estático disparado por push. Uma branch drafts funciona como buffer obrigatório: a automação pode escrever, mas nada vai a público sem um merge humano."
@@ -15,5 +20,6 @@
     "en": "Zero infrastructure to operate; every content change is auditable in git history.",
     "pt": "Zero infraestrutura pra operar; toda mudança de conteúdo é auditável no histórico do git."
   },
+  "project": "living-portfolio",
   "status": "published"
 }

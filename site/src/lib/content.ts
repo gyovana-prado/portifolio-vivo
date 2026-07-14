@@ -67,6 +67,8 @@ export interface FeedEntry {
   narrative: Bilingual;
   technical: Bilingual;
   outcome?: Bilingual;
+  /** Optional id of a project this entry belongs to — renders a link to it. */
+  project?: string;
   status: 'draft' | 'published';
 }
 
