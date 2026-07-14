@@ -11,10 +11,11 @@ A résumé says what you did. GitHub shows code you pushed. Neither shows **how 
 Your portfolio becomes a **live feed of real work**, curated automatically:
 
 1. You work normally inside Claude Code.
-2. A session-end hook evaluates the session against a [relevance rubric](rubric.md): did this session produce a non-obvious technical decision, a hard problem solved, something new that exists now, or a first-time applied learning?
-3. Most sessions produce nothing — and that's the point. When something is portfolio-worthy, the LLM writes it up in two layers (plain-language narrative + technical detail), in two languages (EN/PT), sanitizes client-confidential information, and commits it to a `drafts` branch.
-4. You review and publish drafts with one command whenever you want. Unreviewed drafts never go live — the failure mode is safe.
-5. Every publish triggers a rebuild. The site is always static, always fast, always shareable.
+2. A **silent** session-end hook queues each finished session locally — zero noise in your conversations.
+3. Whenever you feel like it, you run `make drain`. It evaluates the queued sessions against a [relevance rubric](rubric.md): did this session produce a non-obvious technical decision, a hard problem solved, something new that exists now, or a first-time applied learning?
+4. Most sessions produce nothing — and that's the point. When something is portfolio-worthy, the LLM writes it up in two layers (plain-language narrative + technical detail), in two languages (EN/PT), sanitizes client-confidential information, and commits it to a `drafts` branch.
+5. You review and publish drafts with one command whenever you want. Unreviewed drafts never go live — the failure mode is safe.
+6. Every publish triggers a rebuild. The site is always static, always fast, always shareable.
 
 The cognitive load of "remembering to update the portfolio" is transferred to the system. If you have ADHD or just a life, this is the difference between a living portfolio and a dead one with a timestamp.
 
@@ -34,20 +35,23 @@ The cognitive load of "remembering to update the portfolio" is transferred to th
 | Site | Astro (static, i18n EN/PT) | Fast, zero runtime, content-driven |
 | Hosting | Cloudflare Pages / Vercel | Free tier, deploy-on-push, public URL |
 | Content | JSON + Markdown in `content/` | Git is the database; template and content are separate |
-| Automation | Claude Code session-end hook | Evaluation happens where the work happens |
+| Capture | Claude Code `Stop` hook (silent) | Queues sessions with zero conversation noise |
+| Evaluation | `make drain` (headless `claude -p`) | Judges queued sessions against the rubric, on demand |
 | Publishing | MCP server (Python) | `review_and_publish`, `add_project`, `update_now` tools |
 | Auth | Fine-grained GitHub PAT | Single repo, `contents:write` only |
 
 ## Quickstart
 
 ```bash
-# 1. Fork this repo and replace content/ with your own data
-# 2. Deploy site/ to Cloudflare Pages or Vercel (point it at your fork)
-# 3. Install the MCP server and hook in Claude Code
-# 4. Work. The portfolio takes care of itself.
+gh repo fork <owner>/portifolio-vivo --clone && cd portifolio-vivo
+make install                       # site (npm) + mcp (uv) deps
+# then: edit content/, deploy site/ to Cloudflare/Vercel, register the MCP
+# server + capture hook in Claude Code. Work. Run `make drain` when you feel
+# like it. The portfolio takes care of itself.
 ```
 
-Full instructions in [docs/deployment.md](docs/deployment.md).
+**Copy-pasteable, step by step (token, MCP command, hook snippet, deploy):
+[docs/deployment.md](docs/deployment.md).**
 
 ## Local development
 
@@ -57,6 +61,7 @@ make dev        # Astro dev server — EN at /, PT at /pt
 make validate   # validate content/ against the schemas
 make check      # full gate: validate content + run MCP tests
 make build      # validate, then build the static site to site/dist
+make drain      # evaluate queued sessions → write drafts (needs the MCP registered)
 ```
 
 Repository layout:
@@ -65,7 +70,7 @@ Repository layout:
 ├── site/       # Astro static site (i18n EN/PT, dark theme, RSS)
 ├── content/    # THE data — feed, projects, now, cv, profile (yours)
 ├── mcp/        # portfolio-mcp server (Python/uv) + content validator + schemas
-├── hooks/      # Claude Code session-end evaluation hook
+├── hooks/      # capture_session.py (silent Stop hook) + drain_queue.py (make drain)
 ├── docs/       # architecture, content model, MCP spec, deployment
 ├── rubric.md   # relevance & sanitization criteria (the heart of the system)
 └── CLAUDE.md   # agent instructions for working on this repo

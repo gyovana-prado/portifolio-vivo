@@ -14,16 +14,18 @@
           │ session ends
           ▼
 ┌─────────────────────┐
-│  Session-end hook   │  Evaluates the session against rubric.md.
-│  (evaluate)         │  Most sessions → no action. That is correct behavior.
+│  Capture hook       │  Silent Stop hook. Queues {session, transcript} to a
+│  (silent)           │  local file. Zero conversation noise, no evaluation yet.
 └─────────┬───────────┘
-          │ only if portfolio-worthy
+          │ on demand: make drain
           ▼
 ┌─────────────────────┐
-│  Write + sanitize   │  Two layers (narrative + technical), two languages
-│  (LLM)              │  (EN/PT), confidential info removed by category.
+│  Drain (claude -p)  │  Headless per queued session: reads the transcript,
+│  evaluate + write   │  judges it against rubric.md. Most → no action (correct).
+│                     │  If worthy: two layers (narrative + technical), two
+│                     │  languages (EN/PT), confidential info removed by category.
 └─────────┬───────────┘
-          │ commit via GitHub API
+          │ log_activity (MCP) commits via GitHub API
           ▼
 ┌─────────────────────┐
 │  drafts branch      │  Nothing here is public. Safe failure mode:
@@ -44,7 +46,7 @@ portfolio/
 ├── site/          # Astro static site, i18n EN/PT, dark minimal theme
 ├── content/       # THE data. Feed, projects, now, cv. Yours, not the template's.
 ├── mcp/           # portfolio-mcp server (Python)
-├── hooks/         # Claude Code session-end hook + evaluation prompt
+├── hooks/         # capture_session.py (silent Stop hook) + drain_queue.py (evaluator)
 ├── docs/          # you are here
 ├── rubric.md      # relevance criteria — versioned, forkable, part of the product
 └── CLAUDE.md      # agent instructions for working on this repo
@@ -54,7 +56,7 @@ portfolio/
 
 **Static site, git as database.** Content lives as JSON/Markdown in `content/`. Every change is a commit → full history, easy rollback, zero infra cost, and the deploy pipeline (push → rebuild) comes free from the host.
 
-**Evaluation at session end, not on a schedule.** The hook runs where the context is — Claude Code already knows what happened in the session. No daily cron asking "what did you do today?", no manual journaling. The human habit is removed from the loop entirely.
+**Capture at session end, evaluation on demand.** The `Stop` hook is silent: it only queues the finished session (id + transcript path) to a local file, so it adds zero noise to your conversations. The actual judgment runs later, out of band, when you run `make drain` — a headless `claude -p` per queued session reads the transcript and applies the rubric. This split keeps the daily loop invisible while still evaluating where the context is (the transcript), with no daily cron and no manual journaling. (An earlier design blocked at every turn to evaluate inline; it worked but printed an evaluation after every message — kept as `hooks/evaluate_session.py` for reference.)
 
 **Drafts branch as a mandatory buffer (initially).** Between evaluation and publication there is a review step. The reason is not relevance — it is confidentiality. Client work must never auto-publish without a human glance. After the sanitization proves consistently reliable, the owner may relax this to direct publish with a 24h veto window. Start strict.
 

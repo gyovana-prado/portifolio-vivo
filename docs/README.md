@@ -6,8 +6,9 @@ The design docs for the Living Portfolio. Read these before changing the engine.
 |-----|----------------|
 | [architecture.md](architecture.md) | The pipeline (Claude Code → hook → drafts → main), repo layout, key design decisions, failure modes |
 | [content-model.md](content-model.md) | The `content/` JSON schema: feed entries, projects, now, cv, profile, the i18n rule |
-| [mcp-server.md](mcp-server.md) | The `portfolio-mcp` server: tools, security model, session-end hook |
-| [deployment.md](deployment.md) | First deploy, verification checklist, routine operation, forking |
+| [mcp-server.md](mcp-server.md) | The `portfolio-mcp` server: tools, security model, capture hook + drain evaluator |
+| [deployment.md](deployment.md) | Prerequisites, copy-pasteable setup (token, MCP command, hook), verification, routine operation, forking |
+| [../hooks/README.md](../hooks/README.md) | The capture hook and `make drain` evaluator internals |
 
 Product-level docs live at the repo root:
 
