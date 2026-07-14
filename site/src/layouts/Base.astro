@@ -30,6 +30,13 @@ const base = lang === 'en' ? '/' : '/pt/';
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL('/og.png', Astro.site)} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="alternate" hreflang="en" href={new URL('/', Astro.site)} />
     <link rel="alternate" hreflang="pt" href={new URL('/pt/', Astro.site)} />
@@ -42,18 +49,19 @@ const base = lang === 'en' ? '/' : '/pt/';
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body>
+    <a class="skip-link" href="#main">{strings.skipToContent}</a>
     <nav class="topbar">
       <div class="wrap topbar-inner">
         <div class="nav-links">
-          <a href={`${base}#now`}>{strings.now}</a>
-          <a href={`${base}#feed`}>{strings.feed}</a>
-          <a href={`${base}#projects`}>{strings.projects}</a>
-          <a href={`${base}#experience`}>{strings.experience}</a>
+          <a href={`${base}#now`} data-spy="now">{strings.now}</a>
+          <a href={`${base}#feed`} data-spy="feed">{strings.feed}</a>
+          <a href={`${base}#projects`} data-spy="projects">{strings.projects}</a>
+          <a href={`${base}#experience`} data-spy="experience">{strings.experience}</a>
         </div>
         <a class="lang-switch" href={altHref}>{strings.switchLang}</a>
       </div>
     </nav>
-    <main class="wrap">
+    <main id="main" class="wrap">
       <slot />
     </main>
     <footer class="wrap site-footer">
@@ -98,6 +106,45 @@ const base = lang === 'en' ? '/' : '/pt/';
       })();
     </script>
 
+    <!-- Wayfinding: acende o link da nav da seção que está em vista. Um único
+         IntersectionObserver marca a seção mais visível como ativa. -->
+    <script is:inline>
+      (function () {
+        function initSpy() {
+          var links = {};
+          Array.prototype.forEach.call(
+            document.querySelectorAll('.nav-links a[data-spy]'),
+            function (a) { links[a.getAttribute('data-spy')] = a; }
+          );
+          var ids = Object.keys(links);
+          if (!ids.length || !('IntersectionObserver' in window)) return;
+          var visible = {};
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                visible[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0;
+              });
+              var best = null, bestRatio = 0;
+              ids.forEach(function (id) {
+                if ((visible[id] || 0) > bestRatio) { bestRatio = visible[id]; best = id; }
+              });
+              ids.forEach(function (id) {
+                links[id].classList.toggle('active', id === best);
+              });
+            },
+            { rootMargin: '-52px 0px -55% 0px', threshold: [0, 0.25, 0.5, 1] }
+          );
+          ids.forEach(function (id) {
+            var sec = document.getElementById(id);
+            if (sec) io.observe(sec);
+          });
+        }
+        document.addEventListener('astro:page-load', initSpy);
+        if (document.readyState !== 'loading') initSpy();
+        else document.addEventListener('DOMContentLoaded', initSpy);
+      })();
+    </script>
+
     <style>
       .topbar {
         position: sticky;
@@ -129,6 +176,18 @@ const base = lang === 'en' ? '/' : '/pt/';
       .nav-links a:hover {
         color: var(--text);
         text-decoration: none;
+      }
+      /* Wayfinding: o link da seção visível fica aceso, com um traço de accent. */
+      .nav-links a.active {
+        color: var(--text);
+      }
+      .nav-links a.active::after {
+        content: '';
+        display: block;
+        height: 2px;
+        margin-top: 2px;
+        background: var(--accent);
+        border-radius: 2px;
       }
       .lang-switch {
         font-size: 0.8rem;

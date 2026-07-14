@@ -50,6 +50,35 @@ a {
   text-decoration: none;
 }
 
+/* Acessibilidade: foco de teclado visível em qualquer elemento interativo.
+   :focus-visible só aparece na navegação por teclado, não no clique de mouse. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Pular para o conteúdo: primeiro elemento tabulável; fica fora da tela até
+   receber foco, então aparece no topo. Deixa o teclado saltar a topbar sticky. */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  background: var(--bg-elev);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  transition: top 0.15s ease-out;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
 /* Resposta: underline that slides in instead of popping (content links only —
    the nav pill has its own hover). */
 main a,

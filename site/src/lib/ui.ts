@@ -23,6 +23,7 @@ export const ui = {
     stars: 'stars',
     switchLang: 'Português',
     caseStudy: 'Case study',
+    skipToContent: 'Skip to content',
   },
   pt: {
     now: 'Agora',
@@ -44,6 +45,7 @@ export const ui = {
     stars: 'estrelas',
     switchLang: 'English',
     caseStudy: 'Estudo de caso',
+    skipToContent: 'Pular para o conteúdo',
   },
 } satisfies Record<Lang, Record<string, string>>;
 
