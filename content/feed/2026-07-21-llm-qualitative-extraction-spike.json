@@ -1,0 +1,25 @@
+{
+  "id": "2026-07-21-llm-qualitative-extraction-spike",
+  "date": "2026-07-21",
+  "type": "decision",
+  "tags": [
+    "llm",
+    "pydantic-ai",
+    "prompt-engineering",
+    "qualitative-analysis",
+    "data-pipeline"
+  ],
+  "narrative": {
+    "en": "When asked to extract structured insights from thousands of open-ended survey responses about a consumer mobile app, the first question wasn't which model to use — it was which extraction *strategy* to use. Three approaches were benchmarked end-to-end: a two-stage atomic-claims pipeline, a single-pass document approach, and a hybrid with a pre-draft refinement step. The winning strategy wasn't the most sophisticated one.",
+    "pt": "Ao extrair insights estruturados de milhares de respostas abertas sobre um app mobile de consumo, a primeira pergunta não era qual modelo usar — mas qual *estratégia* de extração usar. Três abordagens foram comparadas ponta a ponta: um pipeline de claims atômicos em dois estágios, uma abordagem de documento direto e um híbrido com etapa de rascunho preliminar. A estratégia vencedora não foi a mais sofisticada."
+  },
+  "technical": {
+    "en": "Spike comparing three LLM extraction flows for qualitative open-ended survey data using Pydantic AI and Jinja-templated prompts (via ai-prompter):\n\n- **H3** (two-stage: facts → atomic claims → synthesis): $0.0216/doc, 0 altitude violations, 100% quote grounding\n- **H1+separate-doc**: $0.0296/doc, 1 altitude violation, 71% fact-family coverage\n- **H3+predraft** (H3 + refinement draft): $0.0348/doc, 3 altitude violations, 60% more claims but noisier\n\nKey trade-off: H3+predraft generated 60% more claims than H3 but introduced 3 'altitude violations' (over-generalized statements unsupported by the data). H1 had better fact coverage (71% vs 57% of families) but higher cost and one violation. H3 won on every weighted criterion.\n\nPipeline also includes a deterministic PII guard (emails, phones, CPF, social handles) running before any LLM call — 20% of real responses contained PII, making this non-optional. A `quote_grounding` validator confirms every generated claim traces back to a verbatim quote, making the pipeline fully auditable. Fact index covers 67 facts across 7 families (boolean, categorical, cooccurrence, cross_tab, matrix, multi_select, persona).",
+    "pt": "Spike comparando três fluxos de extração LLM para dados qualitativos (respostas abertas de pesquisa de satisfação) usando Pydantic AI e prompts Jinja via ai-prompter:\n\n- **H3** (dois estágios: fatos → claims atômicos → síntese): $0,0216/doc, 0 violações de altitude, 100% de grounding\n- **H1+doc_separado**: $0,0296/doc, 1 violação, 71% de cobertura de famílias de fatos\n- **H3+predraft** (H3 + rascunho prévio): $0,0348/doc, 3 violações, 60% mais claims mas com mais ruído\n\nTrade-off central: H3+predraft gerou 60% mais claims que H3, mas introduziu 3 'violações de altitude' (generalizações sem suporte nos dados). H1 teve maior cobertura de fatos (71% vs 57% de famílias) mas custo maior e uma violação. H3 venceu em todos os critérios ponderados.\n\nO pipeline inclui um guard determinístico de PII (emails, telefones, CPF, handles) rodando antes de qualquer chamada LLM — 20% das respostas reais continham PII, tornando esse passo obrigatório. Um validador `quote_grounding` confirma que cada claim gerado rastreia até uma citação verbatim, tornando o pipeline auditável. O fact index cobre 67 fatos em 7 famílias (boolean, categorical, cooccurrence, cross_tab, matrix, multi_select, persona)."
+  },
+  "outcome": {
+    "en": "H3 selected as default extraction strategy: lowest cost ($0.0216/doc), zero altitude violations, 100% quote grounding across all test documents.",
+    "pt": "H3 selecionado como estratégia padrão de extração: menor custo ($0,0216/doc), zero violações de altitude, 100% de grounding em todos os documentos de teste."
+  },
+  "status": "draft"
+}
