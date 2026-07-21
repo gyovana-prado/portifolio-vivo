@@ -1,0 +1,21 @@
+{
+  "id": "2026-07-21-surrealdb-silent-schema-migration-fail",
+  "date": "2026-07-21",
+  "type": "problem-solved",
+  "tags": [
+    "surrealdb",
+    "schema-migration",
+    "debugging",
+    "database",
+    "python"
+  ],
+  "narrative": {
+    "en": "While validating a database schema migration, discovered that SurrealDB v3 silently ignores `DEFINE FIELD` statements on fields that already exist — the operation appears to succeed, but the schema is left unchanged. A custom migration runner was compounding the problem by swallowing the underlying error and marking the migration as applied. The bug was proven empirically by querying table metadata in an isolated namespace and cross-checking field types before and after the migration ran.",
+    "pt": "Durante a validação de uma migração de schema de banco de dados, foi descoberto que o SurrealDB v3 ignora silenciosamente instruções `DEFINE FIELD` em campos já existentes — a operação parece ter sucesso, mas o schema permanece inalterado. Um runner de migração customizado agravava o problema ao engolir o erro subjacente e marcar a migração como aplicada. O bug foi comprovado empiricamente consultando os metadados da tabela em um namespace isolado e cruzando os tipos de campos antes e depois da execução da migração."
+  },
+  "technical": {
+    "en": "SurrealDB v3 behavior: `DEFINE FIELD` (without `IF NOT EXISTS`) on an already-existing field emits a silent failure — `The field already exists` — but does not raise an exception that would halt execution. The custom migration runner (`sbl-migrate`, built on `surreal_basics`) catches this at the transaction level and records the migration as `[APPLIED]`, meaning all field redefinitions across the M0→M1 migration were no-ops. Discovered by querying `INFO FOR TABLE` in an isolated namespace (`test_sup513b`) and comparing field type metadata. Fix: replace each bare `DEFINE FIELD` on an existing field with an explicit `REMOVE FIELD IF EXISTS` + `DEFINE FIELD` sequence. The DOWN migration (using `REMOVE TABLE IF EXISTS`) was correctly implemented and unaffected.",
+    "pt": "Comportamento do SurrealDB v3: `DEFINE FIELD` (sem `IF NOT EXISTS`) em um campo já existente gera uma falha silenciosa — `The field already exists` — mas sem lançar uma exceção que interromperia a execução. O runner de migração customizado (`sbl-migrate`, construído sobre `surreal_basics`) captura isso no nível da transação e registra a migração como `[APPLIED]`, fazendo com que todas as redefinições de campo na migração M0→M1 fossem no-ops. Descoberto consultando `INFO FOR TABLE` em um namespace isolado (`test_sup513b`) e comparando os metadados de tipo de campo. Correção: substituir cada `DEFINE FIELD` direto em um campo existente por uma sequência explícita de `REMOVE FIELD IF EXISTS` + `DEFINE FIELD`. A migração DOWN (usando `REMOVE TABLE IF EXISTS`) estava corretamente implementada e não foi afetada."
+  },
+  "status": "draft"
+}
