@@ -1,0 +1,25 @@
+{
+  "id": "2026-07-16-pydantic-ai-parser-key-absence-design",
+  "date": "2026-07-16",
+  "type": "shipped",
+  "tags": [
+    "pydantic-ai",
+    "llm-parsers",
+    "python",
+    "fastapi",
+    "api-design"
+  ],
+  "narrative": {
+    "en": "Built a second LLM-powered parser for a survey analytics platform — this one converts a plain-text analyst description of audience personas into a validated structured spec. The interesting constraint: the downstream clustering factory checks for feature configuration using Python's `'key' in dict` (key presence), not `dict.get('key')` (value check). That distinction forced a non-obvious model design choice.",
+    "pt": "Construí um segundo parser LLM-powered para uma plataforma de análise de pesquisas — esse converte descrições em texto livre de personas de audiência em uma spec estruturada e validada. A restrição interessante: a fábrica de clustering downstream verifica configuração de features usando `'key' in dict` (presença de chave), não `dict.get('key')` (verificação de valor). Essa distinção forçou uma escolha de design de modelo não-óbvia."
+  },
+  "technical": {
+    "en": "The parser uses Pydantic AI with `output_type=PersonaSpec`, and `PersonaSpec` contains `PersonaVariable` objects with optional `order` and `scale` fields. The design choice: both fields use `Optional[list] = None` rather than `list[str] = []`. Reason: the downstream factory calls `model_dump(exclude_none=True)` and then checks `'order' in var` — an empty list `[]` would be falsy in a boolean check but truthy for `in`, silently breaking ordinal variable handling. With `None` defaults, `exclude_none=True` removes the keys entirely, and `'order' in var` correctly returns `False` for categorical variables. The test suite uses Pydantic AI's `TestModel(custom_output_args={...})` to override the LLM with deterministic structured output — no API calls needed in CI. One test (`test_parse_persona_spec_model_dump_exclui_nulos`) explicitly documents the key-absence invariant. Stack: Pydantic AI, FastAPI, Pydantic v2, pytest.",
+    "pt": "O parser usa Pydantic AI com `output_type=PersonaSpec`, e `PersonaSpec` contém objetos `PersonaVariable` com campos opcionais `order` e `scale`. A escolha de design: ambos os campos usam `Optional[list] = None` em vez de `list[str] = []`. Razão: a fábrica downstream chama `model_dump(exclude_none=True)` e depois verifica `'order' in var` — uma lista vazia `[]` seria falsy em checagem booleana mas truthy para `in`, quebrando silenciosamente o tratamento de variáveis ordinais. Com defaults `None`, `exclude_none=True` remove as chaves completamente, e `'order' in var` retorna corretamente `False` para variáveis categóricas. A suíte de testes usa `TestModel(custom_output_args={...})` do Pydantic AI para substituir o LLM por output estruturado determinístico — sem chamadas de API no CI. Um teste (`test_parse_persona_spec_model_dump_exclui_nulos`) documenta explicitamente o invariante de ausência de chave. Stack: Pydantic AI, FastAPI, Pydantic v2, pytest."
+  },
+  "outcome": {
+    "en": "16 tests passing (2 skipped pending API key), ruff clean — parser, models, route, and test suite shipped as one cohesive unit.",
+    "pt": "16 testes passando (2 skippados aguardando API key), ruff limpo — parser, modelos, rota e suíte de testes entregues como uma unidade coesa."
+  },
+  "status": "draft"
+}
