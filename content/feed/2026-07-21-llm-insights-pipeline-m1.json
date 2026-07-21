@@ -1,0 +1,25 @@
+{
+  "id": "2026-07-21-llm-insights-pipeline-m1",
+  "date": "2026-07-21",
+  "type": "shipped",
+  "tags": [
+    "fastapi",
+    "llm-pipeline",
+    "pydantic-ai",
+    "grounding",
+    "insights-generation"
+  ],
+  "narrative": {
+    "en": "Delivered the first milestone of an LLM-powered insights generation API built for an enterprise client. The system takes structured survey data, atomizes it into grounded facts, and produces layered briefings — with a guardrail that enforces every claim traces back to a source. Validated on real survey data: 29 insights generated with 100% grounding correctness and zero guardrail failures.",
+    "pt": "Entregou o primeiro marco de uma API de geração de insights com LLM para um cliente enterprise. O sistema recebe dados de pesquisa estruturados, atomiza-os em fatos fundamentados e produz briefings em camadas — com um guardrail que exige que cada afirmação rastreie sua fonte. Validado com dados reais: 29 insights gerados com 100% de correção de grounding e zero falhas de guardrail."
+  },
+  "technical": {
+    "en": "Built in FastAPI with Pydantic AI for parsing. Core pipeline: fact extraction → multi-pass atomization → document generation (H3 pattern). Grounding guardrail rejects any claim without direct record provenance. Multi-provider architecture (OpenAI and Anthropic validated interchangeably via model-as-config). DAG-aware build sequencing: parallel cards where dependencies allowed, sequential where schemas needed to stabilize first. Empirically closed one architectural question — on-demand fact calculation was scoped out after zero occurrences appeared in real data runs, avoiding premature abstraction. Six stacked PRs structured for clean merge sequence.",
+    "pt": "Construído em FastAPI com Pydantic AI para parsing. Pipeline central: extração de fatos → atomização multi-pass → geração de documentos (padrão H3). Guardrail de grounding rejeita qualquer afirmação sem proveniência direta de registro. Arquitetura multi-provider (OpenAI e Anthropic validados de forma intercambiável via model-as-config). Sequenciamento de build ciente de DAG: cards em paralelo onde dependências permitiam, sequencial onde schemas precisavam estabilizar primeiro. Fechou empiricamente uma questão arquitetural — cálculo de fatos sob demanda foi descartado após zero ocorrências em runs com dados reais, evitando abstração prematura. Seis PRs empilhados estruturados para sequência de merge limpa."
+  },
+  "outcome": {
+    "en": "29 insights generated on real survey data; 100% grounding correctness; 0 guardrail failures.",
+    "pt": "29 insights gerados em dados reais de pesquisa; 100% de correção de grounding; 0 falhas de guardrail."
+  },
+  "status": "draft"
+}
