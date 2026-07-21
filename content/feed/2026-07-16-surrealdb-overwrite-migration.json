@@ -1,0 +1,24 @@
+{
+  "id": "2026-07-16-surrealdb-overwrite-migration",
+  "date": "2026-07-16",
+  "type": "problem-solved",
+  "tags": [
+    "surrealdb",
+    "schema-migration",
+    "database",
+    "dev-environment"
+  ],
+  "narrative": {
+    "en": "Wrote a reversible database schema migration for a new data model milestone. Along the way, discovered that sharing a SurrealDB namespace between two local projects caused silent migration tracker corruption — the migration history table accumulated ghost entries from a different project, making rollback fail. Isolated the root cause, cleaned the state manually, and documented the isolation pattern.",
+    "pt": "Escrevi uma migration reversível para um novo milestone de modelo de dados. No processo, descobri que compartilhar um namespace SurrealDB entre dois projetos locais causava corrupção silenciosa do tracker de migrations — a tabela de histórico acumulava entradas fantasma de outro projeto, quebrando o rollback. Isolei a causa raiz, limpei o estado manualmente e documentei o padrão de isolamento."
+  },
+  "technical": {
+    "en": "SurrealDB v3, Python, uv. The migration adds new SCHEMAFULL tables and re-types several existing fields. Key constraint: re-typing a field on a pre-existing SCHEMAFULL table requires `DEFINE FIELD OVERWRITE` — a plain `DEFINE FIELD` silently no-ops or errors depending on SurrealDB version. The down migration reverses in strict dependency order and explicitly removes array sub-fields to avoid residual ghost sub-fields after table cleanup.\n\nEnvironment bug: two projects sharing the same SurrealDB `namespace/database` made their migration tracking tables collide. The other project's runner had inserted rows into the shared table; when rolling back, the runner couldn't find the corresponding migration files in the current project's directory and aborted. Immediate fix: manual deletion of the contaminating rows. Long-term fix: each project gets its own `namespace/database` pair in local dev.",
+    "pt": "SurrealDB v3, Python, uv. A migration cria novas tabelas SCHEMAFULL e re-tipa campos existentes. O ponto crítico: re-tipar um campo em uma tabela SCHEMAFULL pré-existente exige `DEFINE FIELD OVERWRITE` — um `DEFINE FIELD` simples pode não fazer nada ou lançar erro dependendo da versão do SurrealDB. O down migration reverte na ordem inversa de dependências e remove explicitamente sub-campos de array para evitar campos fantasma residuais.\n\nBug de ambiente: dois projetos compartilhando o mesmo `namespace/database` no SurrealDB faziam suas tabelas de tracking de migrations colidirem. O runner do outro projeto havia inserido linhas na tabela compartilhada; ao tentar rollback, o runner não encontrava os arquivos de migration correspondentes no diretório do projeto atual e abortava. Correção imediata: deleção manual dos registros contaminantes. Solução definitiva: cada projeto usa seu próprio par `namespace/database` em dev local."
+  },
+  "outcome": {
+    "en": "Migration applied and rolled back cleanly: ruff clean, 10/10 tests passing, all field types verified via INFO FOR TABLE.",
+    "pt": "Migration aplicada e revertida sem erros: ruff limpo, 10/10 testes passando, tipos verificados via INFO FOR TABLE."
+  },
+  "status": "draft"
+}
