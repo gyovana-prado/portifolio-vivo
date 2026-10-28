@@ -1,0 +1,25 @@
+{
+  "id": "2026-10-05-review-history-to-mechanical-gates",
+  "date": "2026-10-05",
+  "type": "decision",
+  "tags": [
+    "ci",
+    "testing",
+    "mypy",
+    "code-review",
+    "python"
+  ],
+  "narrative": {
+    "en": "Across a series of pull requests in an open-source framework, reviewers found 61 problems, and about 42 of them were logic or invariant bugs that a green CI had let through. Rather than just writing guidelines, I mined that history into a short defense document: ten hard invariants, eight recurring bug classes, and one rule — the second time a class of bug appears, it must become an automated gate in the same PR. Three gates now exist that did not before, and the first type-check run alone exposed 53 hidden errors.",
+    "pt": "Ao longo de uma série de pull requests em um framework open source, revisores encontraram 61 problemas, e cerca de 42 eram bugs de lógica ou de invariante que um CI verde deixou passar. Em vez de só escrever diretrizes, transformei esse histórico em um documento curto de defesa: dez invariantes rígidas, oito classes de bug recorrentes e uma regra — na segunda vez que uma classe de bug aparece, ela vira um gate automático no mesmo PR. Hoje existem três gates que antes não existiam, e a primeira rodada de type-check sozinha expôs 53 erros escondidos."
+  },
+  "technical": {
+    "en": "**Gates added**\n- **Migration meta-test** (static): contiguous, append-only migration numbering; an explicit ledger tying every migrated table to its writers and to whether the sink guard must cover it, checked bidirectionally against `REQUIRED_TABLES`; and a scan of every SQL write target in the tree so nothing writes to a table no migration defines (kills the constant-drift class, including a fabricated schemaless rollup).\n- **Zero-skip gate**: `TANK_FORBID_SKIPS=1` in CI turns a skipped test into a named failure where the server is guaranteed, closing the vacuous-green class (a phantom `@needs_server`). Gotcha: mutating `session.exitstatus` in `sessionfinish` does not propagate in pytest, so the conversion happens in `makereport`; xfail is excluded because it also reports `skipped=True` but is an asserted expectation.\n- **mypy in CI** with the pydantic plugin. First run: 53 errors in 15 files, all fixed without loosening config. Closed vocabularies (`ScopeObs`/`PlanObs`/`RefsObs`) typed end to end, so an out-of-vocabulary value is now a type error instead of a review finding; 3 targeted ignores remain, each justified.\n\n**Trade-off**: the review-history-first approach front-loads effort into a ledger that must be updated with each migration, but makes that update fail loudly in the same PR rather than surfacing as a later review finding.",
+    "pt": "**Gates adicionados**\n- **Meta-teste de migrações** (estático): numeração contígua e append-only; um ledger explícito que amarra cada tabela migrada a quem a escreve e a se o guard do sink deve cobri-la, conferido bidirecionalmente contra `REQUIRED_TABLES`; e um scan de todo alvo de escrita SQL da árvore para garantir que nada escreve em tabela que nenhuma migração define (elimina a classe constant drift, incluindo um rollup schemaless fabricado).\n- **Gate de zero-skip**: `TANK_FORBID_SKIPS=1` no CI transforma teste pulado em falha nomeada onde o servidor é garantido, fechando a classe do verde vazio (um `@needs_server` fantasma). Pegadinha: mutar `session.exitstatus` no `sessionfinish` não propaga no pytest, então a conversão é feita no `makereport`; xfail fica de fora porque também reporta `skipped=True`, mas é expectativa assertada.\n- **mypy no CI** com plugin do pydantic. Primeira rodada: 53 erros em 15 arquivos, todos corrigidos sem afrouxar a config. Vocabulários fechados (`ScopeObs`/`PlanObs`/`RefsObs`) tipados de ponta a ponta, de modo que um valor fora do vocabulário vira erro de tipo em vez de achado de review; sobram 3 ignores pontuais, cada um justificado.\n\n**Trade-off**: partir do histórico de reviews exige um ledger que precisa ser atualizado a cada migração, mas faz essa atualização falhar alto no mesmo PR, em vez de aparecer depois como achado de review."
+  },
+  "outcome": {
+    "en": "First mypy run surfaced 53 errors in 15 files, all fixed; full suite 539 passed, 1 xfailed with the new gates active.",
+    "pt": "A primeira rodada do mypy expôs 53 erros em 15 arquivos, todos corrigidos; suíte completa com 539 passed, 1 xfailed com os novos gates ativos."
+  },
+  "status": "draft"
+}
