@@ -1,0 +1,25 @@
+{
+  "id": "2026-10-06-sso-account-adoption-ownership-proof",
+  "date": "2026-10-06",
+  "type": "problem-solved",
+  "tags": [
+    "sso",
+    "auth",
+    "security",
+    "incident-response",
+    "multi-tenant"
+  ],
+  "status": "published",
+  "narrative": {
+    "en": "After an enterprise client's users started failing to sign in through single sign-on, the root cause turned out to be old accounts created before SSO existed: the new login tried to create a duplicate record and hit a unique-email constraint. The obvious fix, matching the old account by email, would have let anyone who controls that email in the identity provider take over an existing account, including admin ones. The fix was designed around that risk: accounts are only adopted when safe, privileged accounts require proof of ownership, and admin rights come from the stored account type instead of the email.",
+    "pt": "Depois que usuários de um cliente enterprise começaram a falhar no login por single sign-on, a causa raiz apareceu: contas antigas, criadas antes do SSO, faziam o novo login tentar criar um registro duplicado e esbarrar numa restrição de e-mail único. A correção óbvia, casar a conta antiga pelo e-mail, deixaria quem controla aquele e-mail no provedor de identidade assumir uma conta existente, inclusive de administrador. A solução foi desenhada em torno desse risco: contas só são adotadas quando é seguro, contas privilegiadas exigem prova de posse, e o papel de admin vem do tipo da conta salvo no banco, não do e-mail."
+  },
+  "technical": {
+    "en": "**Root cause:** the upsert looked up users by `external_id`; legacy users had no `external_identity`, so it fell through to `CREATE` and collided with a global unique index on email. The recovery path only re-selected by `external_id`, so it re-raised. About 70% of the tenant's users were in that state, so every one would fail on first SSO login.\n\n**Fix 1 (adopt by email), with review guardrails:** only users with no identity are adoptable (a reused email at the provider fails closed), the email is normalized on both lookup and write, the lookup is scoped per tenant, and a cross-tenant diagnostic log was added. A census showed no cross-tenant duplicates.\n\n**Follow-up after learning the provider allows free email changes (no verification):** email alone is not proof of ownership. Staff accounts are never auto-adopted; they link only if the (provider id, email) pair is on an allowlist held in a secret. `is_admin` is now stamped into the signed session from the account `kind` in the database, and promotion by email list was removed. The env-var shortcut had only been there for a fast release.\n\n**Trade-off:** the allowlist needs a manual step per staff member (collect provider ids from the client) in exchange for closing account takeover. A reviewer's concern that swallowing the collision error would disarm an accidental protection against session theft led us to ship the error handling in a separate PR, only after the admin change.\n\n**Diagnosis:** Cloud Run logs read through `gcloud logging`.",
+    "pt": "**Causa raiz:** o upsert buscava usuários por `external_id`; usuários legados não tinham `external_identity`, então caía no `CREATE` e colidia com um índice único global de e-mail. O caminho de recuperação só re-selecionava por `external_id` e relançava o erro. Cerca de 70% dos usuários do tenant estavam nesse estado, então todos falhariam no primeiro login SSO.\n\n**Fix 1 (adoção por e-mail), com guardas do review:** só usuários sem identity são adotáveis (e-mail reutilizado no provedor falha fechado), o e-mail é normalizado na busca e na escrita, a busca é escopada por tenant e entrou um log de diagnóstico cross-tenant. Um censo mostrou zero duplicados entre tenants.\n\n**Follow-up ao descobrir que o provedor permite trocar e-mail livremente (sem verificação):** e-mail sozinho não prova posse. Contas de staff nunca são adotadas automaticamente; só vinculam se o par (id do provedor, e-mail) estiver numa allowlist guardada em secret. `is_admin` agora é estampado na sessão assinada a partir do `kind` da conta no banco, e a promoção por lista de e-mails foi removida. A env var era só um atalho de release.\n\n**Trade-off:** a allowlist exige um passo manual por membro da equipe (coletar os ids do provedor com o cliente) em troca de fechar o account takeover. A preocupação de um revisor de que engolir o erro de colisão desarmaria uma proteção acidental contra roubo de sessão fez o tratamento do erro sair em um PR separado, só depois da mudança de admin.\n\n**Diagnóstico:** logs do Cloud Run via `gcloud logging`."
+  },
+  "outcome": {
+    "en": "SSO login fixed for all affected legacy accounts, with account takeover through email reuse closed; shipped across 4 reviewed PRs.",
+    "pt": "Login SSO corrigido para todas as contas legadas afetadas, com o account takeover por reuso de e-mail fechado; entregue em 4 PRs revisados."
+  }
+}
