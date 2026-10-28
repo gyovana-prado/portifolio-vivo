@@ -1,0 +1,25 @@
+{
+  "id": "2026-10-14-instrument-must-not-break-caller-pointer-rule",
+  "date": "2026-10-14",
+  "type": "decision",
+  "tags": [
+    "data-integrity",
+    "api-design",
+    "surrealdb",
+    "observability",
+    "python"
+  ],
+  "narrative": {
+    "en": "In a framework that records which pieces of content AI agents consult, a record could carry a link to a content unit that looked valid but actually pointed at the wrong kind of thing. Elsewhere in the same system the fix was to reject such requests outright. Here, the recording code runs inside the caller's own path, so rejecting would let the measuring tool break the thing it measures. The decision was to keep the row but drop only the unsafe link, collapsing two scattered checks into a single rule.",
+    "pt": "Num framework que registra quais conteúdos os agentes de IA consultam, um registro podia carregar um link para uma unidade de conteúdo que parecia válida, mas apontava para o tipo errado de coisa. Em outra parte do mesmo sistema a correção era recusar a requisição. Aqui, o código de registro roda dentro do caminho de quem chama, então recusar deixaria a ferramenta de medição quebrar aquilo que ela mede. A decisão foi manter a linha e descartar só o link inseguro, unificando duas verificações espalhadas numa única regra."
+  },
+  "technical": {
+    "en": "Single pure function `unit_pointer(type, key, ontology)` placed next to the record-shape guard. The `unit` record pointer is written only when the key is record-shaped AND the table it names equals the ontology-declared table for that unit type; anything else writes NONE while `unit_key` stays faithful. Both writers (event builder for ref rows, usage evidence links) now call it; the record-id regex moved out of the registry. Deliberate asymmetry with the read path: `trace`/`neighbors` fail fast on a mismatch before querying, while the write-side instrument degrades gracefully (row kept, join withheld). Tests: pure-rule cases without a server; integration proving a look-alike key in another table yields NONE in both tables, a real key yields a pointer, and a custom table name works live. Full suite 552 passed, 1 xfailed; mypy error count unchanged.",
+    "pt": "Uma função pura `unit_pointer(type, key, ontology)` ao lado da guarda de formato de record. O ponteiro `unit` só é gravado quando a chave tem formato de record E a tabela nomeada é igual à tabela declarada na ontologia para aquele tipo de unidade; qualquer outro caso grava NONE e o `unit_key` continua fiel. Os dois escritores (builder de eventos para ref rows e links de evidência de uso) agora chamam a função; o regex de record-id saiu do registry. Assimetria deliberada com o caminho de leitura: `trace`/`neighbors` falham cedo no mismatch antes da query, enquanto o instrumento do lado da escrita degrada com elegância (linha mantida, join retido). Testes: casos da regra pura sem servidor; integração provando que uma chave look-alike em outra tabela gera NONE nas duas tabelas, uma chave real gera ponteiro e um nome de tabela customizado funciona ao vivo. Suíte completa 552 passed, 1 xfailed; contagem de erros do mypy inalterada."
+  },
+  "outcome": {
+    "en": "Two divergent pointer-writing sites unified into one rule; 552 tests passing, no new type errors.",
+    "pt": "Dois pontos divergentes de escrita de ponteiro unificados numa regra; 552 testes passando, sem novos erros de tipo."
+  },
+  "status": "draft"
+}
