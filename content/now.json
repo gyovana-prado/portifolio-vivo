@@ -1,13 +1,21 @@
 {
-  "updated": "2026-07-13",
+  "updated": "2026-10-28",
   "items": [
     {
-      "en": "Shipping Rotas-SP: a São Paulo public-transit routing engine that surfaces the non-obvious routes a regular app hides (OpenTripPlanner + GTFS, with an LLM re-ranking options and explaining the trade-offs).",
-      "pt": "Colocando de pé o Rotas-SP: um motor de rotas de transporte público de São Paulo que revela os caminhos não-óbvios que um app comum esconde (OpenTripPlanner + GTFS, com um LLM reordenando as opções e explicando os trade-offs)."
+      "en": "Preparing \"Human in the Loop: where do humans still decide?\" for TDC (Nov 12): a talk with a live demo contrasting vibe coding with engaged, decision-driven work alongside an AI agent.",
+      "pt": "Preparando \"Human in the Loop: onde o humano ainda decide?\" para o TDC (12/11): uma palestra com demo ao vivo contrastando vibe coding com trabalho engajado, guiado por decisão, ao lado de um agente de IA."
     },
     {
-      "en": "Data & ML engagements for enterprise clients across fintech and edtech — an adaptive-learning platform, an embeddings proof-of-concept, and research/NPS operations.",
-      "pt": "Frentes de dados & ML para clientes enterprise em fintech e edtech — uma plataforma de adaptive-learning, uma prova de conceito de embeddings e operações de pesquisa/NPS."
+      "en": "Building Tank, an open-source Python framework that makes your content accessible to agents and proves it is being used well: an ontology declared in code, citable evidence, and analytics on what agents actually found useful.",
+      "pt": "Construindo o Tank, um framework Python open source que torna seu conteúdo acessível a agentes e prova que ele está sendo bem usado: ontologia declarada em código, evidência citável e analytics do que os agentes de fato acharam útil."
+    },
+    {
+      "en": "Pão com Ovo: an app that measures how much of the nutritionist's meal plan you actually followed. Send a photo or a description of the meal and the AI compares it with your plan, no calorie counting. Telegram bot in production, Android app in Expo.",
+      "pt": "Pão com Ovo: um app que mede quanto do plano alimentar da nutricionista você seguiu de fato. Você manda a foto ou a descrição da refeição e a IA compara com o seu plano, sem contar calorias. Bot do Telegram em produção, app Android em Expo."
+    },
+    {
+      "en": "Bringing a friend's PlayStation trophy companion app (PlatJourney) to Xbox: achievement sync via OpenXBL, plus prompt evals for its AI assistant.",
+      "pt": "Levando o PlatJourney, app de platinas de PlayStation de um amigo, para o Xbox: sincronização de conquistas via OpenXBL, mais evals de prompt para o assistente de IA dele."
     }
   ]
 }
