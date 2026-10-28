@@ -1,0 +1,25 @@
+{
+  "id": "2026-09-29-readonly-eval-gateway-role-over-keyword-scan",
+  "date": "2026-09-29",
+  "type": "decision",
+  "tags": [
+    "evals",
+    "security",
+    "surrealdb",
+    "defense-in-depth",
+    "llm-agents"
+  ],
+  "narrative": {
+    "en": "An evaluation harness lets AI agents run their own database queries against a shared test dataset. Code review found that a simple 'is this query read-only?' check could be fooled by wrapping a delete inside a harmless-looking select, which silently corrupted the data every later run was scored against. Instead of making the filter smarter and hoping, the fix moved the guarantee into the database itself: agent queries now run as a user who is only allowed to read. The text filter stayed, but only to give friendly error messages.",
+    "pt": "Um harness de avaliação deixa agentes de IA rodarem suas próprias consultas num banco de teste compartilhado. A revisão de código achou que uma checagem simples de 'essa consulta é só leitura?' podia ser enganada escondendo um delete dentro de um select inofensivo, o que corrompia em silêncio os dados contra os quais todas as rodadas seguintes eram pontuadas. Em vez de deixar o filtro mais esperto e torcer, a correção levou a garantia para o próprio banco: as consultas dos agentes agora rodam como um usuário que só pode ler. O filtro de texto continuou, mas só para dar mensagens de erro amigáveis."
+  },
+  "technical": {
+    "en": "**Bug:** the gateway validated only the first keyword, so `SELECT * FROM (DELETE ...)` passed and mutated the shared fixture; later runs scored against golds the data no longer matched. The scorer's introspection check had the same flaw (anchored at position 0, so `SELECT 1; INFO FOR DB;` was credited as correct).\n\n**Decision:** make the *role* the guarantee, not the parser. Agent queries run under a VIEWER-role user bootstrapped once with root; a word-level scan over every statement (string literals stripped) remains only as the friendly early error. Trade-off: one extra bootstrap step and a second credential, versus an ever-growing denylist that a creative query can always route around. Verified that a viewer DELETE against seeded data is a no-op.\n\n**Related hardening from the same review:** HTTPError caught before URLError so the 400 body with the real parse error is not lost; generators refuse to overwrite a round that already has a manifest unless `--force`; report regeneration rewrites only the region between generated markers so hand-written analysis survives.",
+    "pt": "**Bug:** o gateway validava só a primeira keyword, então `SELECT * FROM (DELETE ...)` passava e mutava a fixture compartilhada; as rodadas seguintes eram pontuadas contra golds que os dados já não refletiam. O check de introspecção do scorer tinha a mesma falha (ancorado na posição 0, então `SELECT 1; INFO FOR DB;` era creditado como correto).\n\n**Decisão:** fazer o *role* ser a garantia, não o parser. As consultas dos agentes rodam com um usuário de role VIEWER criado uma vez com root; um scan por palavra em cada statement (literais de string removidos) fica só como erro amigável antecipado. Trade-off: um passo extra de bootstrap e uma segunda credencial, contra uma denylist que só cresce e que uma consulta criativa sempre contorna. Verificado que um DELETE como viewer sobre dados semeados é no-op.\n\n**Endurecimentos relacionados da mesma revisão:** HTTPError capturado antes de URLError para não perder o corpo 400 com o erro real de parse; geradores recusam sobrescrever uma rodada que já tem manifest sem `--force`; a regeneração do relatório reescreve só a região entre marcadores gerados, preservando a análise escrita à mão."
+  },
+  "outcome": {
+    "en": "Viewer-role DELETE against seeded data verified as a no-op; shared eval fixture can no longer be mutated by agent queries.",
+    "pt": "DELETE como viewer sobre dados semeados verificado como no-op; a fixture de avaliação compartilhada não pode mais ser mutada por consultas dos agentes."
+  },
+  "status": "draft"
+}
