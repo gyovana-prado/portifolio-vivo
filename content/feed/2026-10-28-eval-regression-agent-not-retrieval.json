@@ -1,0 +1,25 @@
+{
+  "id": "2026-10-28-eval-regression-agent-not-retrieval",
+  "date": "2026-10-28",
+  "type": "problem-solved",
+  "tags": [
+    "evals",
+    "llm-as-judge",
+    "regression-analysis",
+    "retrieval",
+    "release-engineering"
+  ],
+  "narrative": {
+    "en": "A release scoreboard showed nine metrics getting worse, which looked like a regression. Instead of reverting, I split the results: every metric that dropped belonged to the end-to-end agent run, while retrieval, loading and checks were identical. A blind re-judging of both versions' answers, mixed together with the same judge, ruled out judge drift, and the baseline agent dropped even more than the new one. The release was fine; the noise came from the agent run itself.",
+    "pt": "O placar de uma release mostrou nove métricas piores, o que parecia uma regressão. Em vez de reverter, separei os resultados: todas as métricas que caíram eram da rodada do agente ponta a ponta, enquanto busca, carga e checks estavam idênticos. Um rejulgamento às cegas das respostas das duas versões, misturadas e com o mesmo juiz, descartou desvio do juiz, e o agente de referência caiu ainda mais que o novo. A release estava boa; o ruído vinha da execução do agente."
+  },
+  "technical": {
+    "en": "- **Scoreboard v-prev → v-new:** 9 improved, 13 equal, 9 worse. All 9 regressions sit in the agent-vs-judge block (20 questions); retrieval metrics (R@10, nDCG, MRR, hybrid and re-ranked nDCG) and data checks were identical.\n- **Control:** the production-style baseline agent ran on the same code and database in both rounds and fell further (15→9 accepted of 20) than the new system (20→17). If retrieval had changed, the retrieval metrics would have moved.\n- **Judge hypothesis closed:** answers from both versions were re-judged together, blind, in the same batches with the same judge; the drop persisted.\n- **Remaining variables:** run-to-run variance of a small model, and the briefing date changing between rounds. The 3 lost questions were reasoning errors on correctly opened sources (date inferred instead of read).\n- **Noise floor:** with 20 questions each is worth 5 points, and the previous round was at a 20/20 ceiling, so it could only go down.\n- **Reading that holds:** compare within the same round. The margin over the baseline grew (+5 → +8 questions).\n- **Next round:** run both versions' agents the same day and pin the briefing date as a recorded run parameter.",
+    "pt": "- **Placar v-ant → v-nova:** 9 melhoraram, 13 iguais, 9 pioraram. As 9 regressões estão todas no bloco agente-vs-juiz (20 perguntas); métricas de busca (R@10, nDCG, MRR, nDCG híbrida e com re-rank) e checks de dados ficaram idênticos.\n- **Controle:** o agente de referência, estilo produção, rodou com o mesmo código e banco nas duas rodadas e caiu mais (15→9 aceitas de 20) que o sistema novo (20→17). Se a busca tivesse mudado, as métricas de busca teriam se mexido.\n- **Hipótese do juiz descartada:** respostas das duas versões foram rejulgadas juntas, às cegas, nos mesmos lotes e com o mesmo juiz; a queda continuou.\n- **Variáveis restantes:** variância entre execuções de um modelo pequeno e a data do briefing mudando entre as rodadas. As 3 perguntas perdidas foram erros de raciocínio sobre fontes abertas corretamente (data inferida em vez de lida).\n- **Piso de ruído:** com 20 perguntas, cada uma vale 5 pontos, e a rodada anterior estava no teto de 20/20, só dava para descer.\n- **Leitura que vale:** comparar dentro da mesma rodada. A vantagem sobre a referência aumentou (+5 → +8 perguntas).\n- **Próxima rodada:** rodar os agentes das duas versões no mesmo dia e fixar a data do briefing como parâmetro registrado."
+  },
+  "outcome": {
+    "en": "9 apparent regressions traced to agent-run noise, with zero retrieval metric change; margin over baseline grew from +5 to +8 of 20.",
+    "pt": "9 regressões aparentes atribuídas a ruído da rodada do agente, com zero mudança nas métricas de busca; vantagem sobre a referência subiu de +5 para +8 de 20."
+  },
+  "status": "published"
+}
