@@ -1,0 +1,24 @@
+{
+  "id": "2026-09-28-trend-delta-mixed-series-discriminating-tests",
+  "date": "2026-09-28",
+  "type": "problem-solved",
+  "tags": [
+    "code-review",
+    "testing",
+    "analytics",
+    "adaptive-learning"
+  ],
+  "narrative": {
+    "en": "A pull request for a learning-analytics dashboard drew ten review findings. Instead of accepting them on trust, each was checked against the code, and all ten held up. The worst one: the chart had been split into two separate score series (practice and assessment), but the 'getting worse' alert still compared points across both. A student who practiced well and then took an assessment, which starts from a clean slate, was flagged as declining when they had actually improved.",
+    "pt": "Um pull request de um dashboard de analytics de aprendizagem recebeu dez achados de review. Em vez de aceitá-los de olhos fechados, cada um foi conferido no código, e os dez procediam. O pior: o gráfico tinha sido separado em duas séries de nota (prática e avaliação), mas o alerta de 'piorando' ainda comparava pontos das duas. Um aluno que praticava bem e depois fazia uma avaliação, que parte do zero, era marcado como em queda quando na verdade tinha melhorado."
+  },
+  "technical": {
+    "en": "- **Bug:** the trend delta read the raw mixed series; fixed by computing it within a single series (assessment when it has ≥2 points, otherwise practice). Related: 'latest state' was reduced by `max(response_number)`, an ordinal that resets per session, so a long practice session beat yesterday's shorter assessment; switched to a timestamp-based `_newer`.\n- **Tests that actually discriminate:** each logic fix was reverted in turn to confirm its new test fails on the old code. The first `_trend` test passed on the buggy version too, so its fixture values were changed until it separated the two behaviors.\n- **Fragile fakes:** adding one column to a SELECT broke 20 tests because fakes matched queries by the substring `\"response_number, created\"`. Matchers were loosened to `\"response_number\"`, which survives column insertion while still excluding the cohort aggregation queries.\n- **Scope call:** one query was left out of the placeholder sweep, since covering it needed a membership fake, and its query path is already exercised through another function.\n- Result: 702 tests passing, lint and type checks clean.",
+    "pt": "- **Bug:** o delta de tendência lia a série bruta misturada; corrigido calculando dentro de uma série só (avaliação quando tem ≥2 pontos, senão prática). Relacionado: o 'estado atual' era reduzido por `max(response_number)`, um ordinal que reinicia a cada sessão, então uma sessão longa de prática vencia a avaliação mais curta de ontem; trocado por `_newer`, baseado em timestamp.\n- **Testes que discriminam de verdade:** cada correção de lógica foi revertida para confirmar que o teste novo falha no código antigo. O primeiro teste de `_trend` passava também na versão com bug, então os valores do fixture foram trocados até separar os dois comportamentos.\n- **Fakes frágeis:** adicionar uma coluna ao SELECT quebrou 20 testes, porque os fakes casavam a query pela substring `\"response_number, created\"`. Os matchers foram afrouxados para `\"response_number\"`, que sobrevive à inserção de coluna e ainda exclui as queries de agregação da cohort.\n- **Decisão de escopo:** uma query ficou fora da varredura de placeholders, pois cobri-la exigia um fake de membership e o caminho dela já é exercitado por outra função.\n- Resultado: 702 testes passando, lint e tipos limpos."
+  },
+  "outcome": {
+    "en": "10 of 10 review findings confirmed and fixed; 3 logic fixes each backed by a test shown to fail on the old code; 702 tests green.",
+    "pt": "10 de 10 achados do review confirmados e corrigidos; 3 correções de lógica, cada uma com teste que comprovadamente falha no código antigo; 702 testes passando."
+  },
+  "status": "draft"
+}
