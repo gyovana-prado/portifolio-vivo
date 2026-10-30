@@ -26,6 +26,10 @@
       "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
       "minItems": 1
     },
+    "title": {
+      "$ref": "bilingual.schema.json",
+      "description": "Optional short headline (one sentence, ~60 chars). The site falls back to the narrative's first sentence."
+    },
     "narrative": { "$ref": "bilingual.schema.json" },
     "technical": { "$ref": "bilingual.schema.json" },
     "outcome": { "$ref": "bilingual.schema.json" },

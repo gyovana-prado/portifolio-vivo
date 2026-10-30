@@ -73,6 +73,8 @@ the feed.
    - id: "YYYY-MM-DD-slug" · date: "YYYY-MM-DD" (the session's date)
    - type: decision | problem-solved | shipped | learning
    - tags: 2-5 lowercase kebab-case tags
+   - title: {{en, pt}} — one short headline sentence (~60 chars) that states
+     the insight, not the topic ("Cap the batch by bytes, not by records.")
    - narrative: {{en, pt}} — 2-4 sentences for a non-technical reader
    - technical: {{en, pt}} — stack, approach, trade-offs (markdown ok)
    - outcome: {{en, pt}} — one measurable line, when one exists (optional)

@@ -2,6 +2,10 @@
   "id": "2026-10-14-instrument-must-not-break-caller-pointer-rule",
   "date": "2026-10-14",
   "type": "decision",
+  "title": {
+    "en": "Measuring must not break what it measures.",
+    "pt": "A medição não pode quebrar o que mede."
+  },
   "tags": [
     "data-integrity",
     "api-design",

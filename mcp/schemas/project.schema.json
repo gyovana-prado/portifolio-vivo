@@ -12,6 +12,27 @@
     "title": { "$ref": "bilingual.schema.json" },
     "summary": { "$ref": "bilingual.schema.json" },
     "case_study": { "$ref": "bilingual.schema.json" },
+    "story": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["problem", "decision", "evidence"],
+      "description": "Optional problem → decision → evidence reading, shown on featured projects",
+      "properties": {
+        "problem": { "$ref": "bilingual.schema.json" },
+        "decision": { "$ref": "bilingual.schema.json" },
+        "evidence": { "$ref": "bilingual.schema.json" }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "label"],
+      "description": "Optional headline number for the project card, e.g. −88%",
+      "properties": {
+        "value": { "type": "string" },
+        "label": { "$ref": "bilingual.schema.json" }
+      }
+    },
     "stack": {
       "type": "array",
       "items": { "type": "string" },

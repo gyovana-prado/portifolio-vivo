@@ -1,6 +1,6 @@
 {
   "id": "critical-pipeline-optimization",
-  "featured": false,
+  "featured": true,
   "title": {
     "en": "Critical Pipeline Optimization (88% Faster)",
     "pt": "Otimização de Pipeline Crítico (88% Mais Rápido)"
@@ -13,6 +13,35 @@
     "en": "A critical materialized table had grown to the point of timing out. I broke the monolithic transformation into modular steps and applied dbt best practices, reducing execution time by up to 88% and removing the timeouts. I also used AI-assisted techniques (prompt engineering and in-context learning) to speed up the investigation and validate candidate refactors.",
     "pt": "Uma tabela materializada crítica havia crescido a ponto de estourar timeout. Quebrei a transformação monolítica em passos modulares e apliquei boas práticas de dbt, reduzindo o tempo de execução em até 88% e eliminando os timeouts. Também usei técnicas assistidas por IA (prompt engineering e in-context learning) para acelerar a investigação e validar as refatorações candidatas."
   },
-  "stack": ["dbt", "bigquery", "sql", "prompt-engineering"],
-  "period": { "start": "2023-06", "end": "2023-09" }
+  "story": {
+    "problem": {
+      "pt": "Uma tabela materializada cresceu até estourar o tempo limite.",
+      "en": "A materialized table grew until it hit the timeout."
+    },
+    "decision": {
+      "pt": "Quebrar a transformação monolítica em etapas modulares, com boas práticas de modelagem em dbt.",
+      "en": "Break the monolithic transformation into modular steps, with dbt modeling best practices."
+    },
+    "evidence": {
+      "pt": "Até 88% menos tempo de execução e fim dos timeouts.",
+      "en": "Up to 88% less execution time and no more timeouts."
+    }
+  },
+  "metric": {
+    "value": "−88%",
+    "label": {
+      "pt": "no tempo de execução",
+      "en": "execution time"
+    }
+  },
+  "stack": [
+    "dbt",
+    "bigquery",
+    "sql",
+    "prompt-engineering"
+  ],
+  "period": {
+    "start": "2023-06",
+    "end": "2023-09"
+  }
 }

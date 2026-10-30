@@ -2,6 +2,10 @@
   "id": "2026-07-16-surrealdb-overwrite-migration",
   "date": "2026-07-16",
   "type": "problem-solved",
+  "title": {
+    "en": "A shared namespace was corrupting migrations.",
+    "pt": "Um namespace compartilhado corrompia as migrations."
+  },
   "tags": [
     "surrealdb",
     "schema-migration",

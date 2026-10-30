@@ -2,99 +2,123 @@
 import type { Lang, Profile } from '../lib/content';
 import { t } from '../lib/content';
 import { ui } from '../lib/ui';
-import type { GitHubStats } from '../lib/github';
 
 interface Props {
   lang: Lang;
   profile: Profile;
-  stats: GitHubStats | null;
 }
 
-const { lang, profile, stats } = Astro.props;
+const { lang, profile } = Astro.props;
 const strings = ui[lang];
 ---
 
 <header class="hero">
-  {profile.avatar && <img class="avatar reveal" src={profile.avatar} alt={profile.name} />}
-  <h1 class="reveal" transition:name="hero-name">{profile.name}</h1>
-  <p class="headline reveal">{t(profile.headline, lang)}<span class="cursor" aria-hidden="true"></span></p>
-  {profile.location && <p class="faint location reveal">{t(profile.location, lang)}</p>}
-  {profile.bio && <p class="muted bio reveal">{t(profile.bio, lang)}</p>}
-
-  <div class="links reveal">
-    {profile.links.map((l) => (
-      <a href={l.url} rel="me noopener" target="_blank">{l.label}</a>
-    ))}
-  </div>
-
-  {stats && (
-    <div class="stats reveal">
-      <a href={stats.profileUrl} target="_blank" rel="noopener">
-        <strong>{stats.publicRepos}</strong> <span class="faint">{strings.repos}</span>
-      </a>
-      <span><strong>{stats.followers}</strong> <span class="faint">{strings.followers}</span></span>
-      <span><strong>{stats.totalStars}</strong> <span class="faint">{strings.stars}</span></span>
+  <div class="eyebrow reveal">{strings.heroEyebrow}</div>
+  <h1 class="reveal" transition:name="hero-name">
+    {strings.heroLine1}<br />
+    {strings.heroLine2} <em>{strings.heroLine2Em}</em><span class="cursor" aria-hidden="true"></span>
+  </h1>
+  <div class="intro reveal">
+    <p>{strings.heroIntro}</p>
+    <div class="identity">
+      {profile.avatar && <img src={profile.avatar} alt="" width="54" height="54" />}
+      <div>
+        <b>{profile.name}</b>
+        {profile.location && <span>{t(profile.location, lang)}</span>}
+        <span>{t(profile.headline, lang)}</span>
+      </div>
     </div>
-  )}
+  </div>
+  <div class="actions reveal">
+    <a class="button" href="#projects">{strings.heroCta}</a>
+    <a href="#feed">{strings.heroSecondary}</a>
+  </div>
 </header>
 
 <style>
   .hero {
-    padding: 40px 0 44px;
-  }
-  .avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--border);
-    margin-bottom: 18px;
+    padding: 74px 0 68px;
   }
   h1 {
-    font-size: 2rem;
-    margin-bottom: 6px;
+    font-size: clamp(2.6rem, 6.3vw, 4.75rem);
+    max-width: 900px;
+    margin: 22px 0 26px;
   }
-  .headline {
-    font-size: 1.15rem;
-    color: var(--text);
-    margin-bottom: 4px;
+  h1 em {
+    font-family: var(--serif);
+    font-weight: 400;
+    color: var(--accent);
   }
   /* Terminal cursor: this site is written from work sessions in a terminal. */
   .cursor {
     display: inline-block;
-    width: 0.55ch;
-    height: 1em;
-    margin-left: 8px;
+    width: 0.45ch;
+    height: 0.8em;
+    margin-left: 10px;
     background: var(--accent);
-    vertical-align: -0.12em;
+    vertical-align: -0.04em;
     animation: blink 1.15s step-end infinite;
   }
   @keyframes blink {
     50% { opacity: 0; }
   }
-  .location {
-    font-size: 0.85rem;
-    margin-bottom: 14px;
+  .intro {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 70px;
+    align-items: end;
   }
-  .bio {
-    max-width: 60ch;
-    margin-bottom: 18px;
-  }
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    font-size: 0.92rem;
-    margin-bottom: 20px;
-  }
-  .stats {
-    display: flex;
-    gap: 22px;
-    font-size: 0.9rem;
+  .intro > p {
+    font-size: 1.125rem;
+    max-width: 660px;
     color: var(--text-dim);
   }
-  .stats strong {
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-dim);
+  }
+  .identity img {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: grayscale(100%);
+  }
+  .identity b {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
     color: var(--text);
-    font-variant-numeric: tabular-nums;
+  }
+  .identity span {
+    display: block;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    align-items: center;
+    margin-top: 32px;
+    font-size: 0.875rem;
+  }
+  @media (max-width: 700px) {
+    .hero {
+      padding: 44px 0;
+    }
+    .intro {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .intro > p {
+      font-size: 1rem;
+    }
+    .actions {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 </style>

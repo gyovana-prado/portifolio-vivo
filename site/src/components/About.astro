@@ -1,0 +1,130 @@
+---
+import type { Lang, Profile, CV as CVData } from '../lib/content';
+import { t } from '../lib/content';
+import { ui } from '../lib/ui';
+import { formatPeriod } from '../lib/dates';
+import CV from './CV.astro';
+
+interface Props {
+  lang: Lang;
+  profile: Profile;
+  cv: CVData;
+}
+
+const { lang, profile, cv } = Astro.props;
+const strings = ui[lang];
+const skills = (cv.skills ?? []).flatMap((g) => g.items).slice(0, 10);
+const email = profile.links.find((l) => l.url.startsWith('mailto:'));
+const external = profile.links.filter((l) => !l.url.startsWith('mailto:'));
+---
+
+<section id="about">
+  <div class="about-grid">
+    <div class="reveal">
+      <div class="eyebrow">{strings.aboutEyebrow}</div>
+      <h2>{strings.aboutTitle}</h2>
+      {profile.bio && <p class="bio">{t(profile.bio, lang)}</p>}
+      {skills.length > 0 && <div class="skills">{skills.join(' · ')}</div>}
+    </div>
+    <div class="reveal">
+      {(cv.experience ?? []).map((job) => (
+        <div class="career">
+          <div>
+            <b>{job.organization}</b>
+            <span>{t(job.role, lang)}</span>
+          </div>
+          <span class="when">{formatPeriod(job.period, lang, strings.present)}</span>
+        </div>
+      ))}
+      <details class="full-cv">
+        <summary>{strings.fullCareer}</summary>
+        <div class="cv-inner"><CV lang={lang} cv={cv} /></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="outro reveal">
+  <div class="eyebrow">{strings.contactEyebrow}</div>
+  <h2>{strings.contactTitle}</h2>
+  {email && <a class="button" href={email.url}>{strings.contactCta}</a>}
+  <div class="contact-links">
+    {external.map((l) => <a href={l.url} rel="me noopener" target="_blank">{l.label} →</a>)}
+  </div>
+</section>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+  }
+  .about-grid h2 {
+    font-size: clamp(2rem, 4vw, 2.9rem);
+    margin: 10px 0 20px;
+  }
+  .bio {
+    font-size: 0.94rem;
+    color: var(--text-dim);
+  }
+  .skills {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    line-height: 1.8;
+    color: var(--text-faint);
+    margin-top: 18px;
+  }
+  .career {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 0;
+    border-top: 1px solid var(--border);
+  }
+  .career b {
+    display: block;
+    font-size: 0.94rem;
+    font-weight: 500;
+  }
+  .career span {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .career .when {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+    padding-top: 4px;
+  }
+  .full-cv {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  /* The embedded CV keeps its own markup; drop its section chrome. */
+  .cv-inner :global(section) {
+    border-top: 0;
+    padding: 24px 0 0;
+  }
+  .outro {
+    padding: 64px 0;
+  }
+  .outro h2 {
+    max-width: 680px;
+    font-size: clamp(2.1rem, 4.4vw, 3rem);
+    margin: 14px 0 26px;
+  }
+  .contact-links {
+    display: flex;
+    gap: 24px;
+    margin-top: 26px;
+    font-size: 0.875rem;
+  }
+  @media (max-width: 700px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 34px;
+    }
+  }
+</style>

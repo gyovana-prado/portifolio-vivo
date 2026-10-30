@@ -2,6 +2,10 @@
   "id": "2026-10-08-typed-reference-format-controlled-experiment",
   "date": "2026-10-08",
   "type": "decision",
+  "title": {
+    "en": "A debate settled by experiment, not taste.",
+    "pt": "Um debate resolvido por experimento, não por gosto."
+  },
   "tags": [
     "llm-agents",
     "experiment-design",

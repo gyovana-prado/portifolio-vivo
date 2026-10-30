@@ -64,6 +64,8 @@ export interface FeedEntry {
   date: string;
   type: FeedType;
   tags: string[];
+  /** Optional one-sentence headline; see feedTitle() for the fallback. */
+  title?: Bilingual;
   narrative: Bilingual;
   technical: Bilingual;
   outcome?: Bilingual;
@@ -78,6 +80,9 @@ export interface Project {
   title: Bilingual;
   summary: Bilingual;
   case_study?: Bilingual;
+  /** Problem → decision → evidence; projects with a story get the large card. */
+  story?: { problem: Bilingual; decision: Bilingual; evidence: Bilingual };
+  metric?: { value: string; label: Bilingual };
   stack: string[];
   links?: Record<string, string>;
   period: { start: string; end: string | null };
@@ -149,6 +154,14 @@ export function getCV(): CV {
 
 export function getNow(): Now | null {
   return readJson<Now>('now.json');
+}
+
+/** The entry's headline: its title, or the narrative's first sentence. */
+export function feedTitle(entry: FeedEntry, lang: Lang): string {
+  if (entry.title) return t(entry.title, lang);
+  const narrative = t(entry.narrative, lang);
+  const first = narrative.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? narrative;
+  return first.length > 110 ? `${first.slice(0, 107).trimEnd()}…` : first;
 }
 
 /** Only published entries render on the live site, newest first. */
