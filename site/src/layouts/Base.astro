@@ -15,8 +15,7 @@ interface Props {
 const { lang, title, description, jsonLd } = Astro.props;
 const strings = ui[lang];
 
-// The "other language" URL for the switcher, and this language's home.
-const altHref = lang === 'en' ? '/pt/' : '/';
+// This language's home.
 const base = lang === 'en' ? '/' : '/pt/';
 ---
 
@@ -59,7 +58,10 @@ const base = lang === 'en' ? '/' : '/pt/';
           <a href={`${base}#now`} data-spy="now">{strings.now}</a>
           <a href={`${base}#about`} data-spy="about">{strings.navAbout}</a>
           <a class="contact-nav" href={`${base}#contact`}>{strings.navContact}</a>
-          <a class="lang-switch" href={altHref}>{strings.switchLang}</a>
+          <div class="lang-switch" role="group" aria-label="Language / Idioma">
+            <a href="/pt/" hreflang="pt" aria-current={lang === 'pt' ? 'true' : undefined}>PT-BR</a>
+            <a href="/" hreflang="en" aria-current={lang === 'en' ? 'true' : undefined}>EN</a>
+          </div>
         </div>
       </div>
     </nav>
@@ -213,16 +215,26 @@ const base = lang === 'en' ? '/' : '/pt/';
         border-radius: 2px;
       }
       .lang-switch {
-        font-size: 0.8rem;
-        color: var(--text-dim);
-        border: 1px solid var(--border);
+        display: inline-flex;
+        border: 1px solid var(--border-strong);
         border-radius: 999px;
-        padding: 4px 12px;
+        padding: 2px;
+        font-family: var(--mono);
+        font-size: 0.7rem;
       }
-      .lang-switch:hover {
+      .lang-switch a {
+        color: var(--text-dim);
+        padding: 3px 10px;
+        border-radius: 999px;
+        transition: color 0.15s ease-out, background 0.15s ease-out;
+      }
+      .lang-switch a:hover {
         color: var(--text);
         text-decoration: none;
-        border-color: var(--accent-dim);
+      }
+      .lang-switch a[aria-current='true'] {
+        background: var(--accent);
+        color: var(--on-accent);
       }
       .site-footer {
         padding-top: 22px;

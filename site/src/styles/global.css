@@ -1,17 +1,17 @@
 :root {
-  /* Paper tone, light only (the approved redesign). */
-  color-scheme: light;
-  --bg: #f8f8f4;
-  --bg-elev: #ecefe7;
-  --border: #d9ddd5;
-  --border-strong: #c9cfc1;
-  --text: #242a26;
-  --text-dim: #5b625c;
-  --text-faint: #646d5c;
-  --accent: #5d6d45;
-  --accent-strong: #293a2b;
-  --on-accent: #ffffff;
-  --accent-dim: #b9c3ae;
+  /* Dark, editorial: the redesign's layout on a near-black green-grey. */
+  color-scheme: dark;
+  --bg: #111311;
+  --bg-elev: #1a1d1a;
+  --border: #2b302b;
+  --border-strong: #3a413a;
+  --text: #e6e9e3;
+  --text-dim: #a9b0a6;
+  --text-faint: #8e978b;
+  --accent: #a9bb8c;
+  --accent-strong: #a9bb8c;
+  --on-accent: #111311;
+  --accent-dim: #4a5640;
   --radius: 4px;
   --maxw: 1080px;
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -19,10 +19,10 @@
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Feed type accents */
-  --t-decision: #7a4fb0;
-  --t-problem-solved: #1f6a85;
-  --t-shipped: #4a7228;
-  --t-learning: #8a5a12;
+  --t-decision: #bb9af7;
+  --t-problem-solved: #7dcfff;
+  --t-shipped: #9ece6a;
+  --t-learning: #e0af68;
 }
 
 
