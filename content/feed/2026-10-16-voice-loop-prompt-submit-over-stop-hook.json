@@ -2,6 +2,10 @@
   "id": "2026-10-16-voice-loop-prompt-submit-over-stop-hook",
   "date": "2026-10-16",
   "type": "decision",
+  "title": {
+    "en": "Talking to a coding agent by voice.",
+    "pt": "Conversar por voz com um agente de código."
+  },
   "tags": [
     "claude-code",
     "plugins",

@@ -2,6 +2,10 @@
   "id": "2026-07-16-pydantic-ai-parser-key-absence-design",
   "date": "2026-07-16",
   "type": "shipped",
+  "title": {
+    "en": "When a missing field is information too.",
+    "pt": "Quando a ausência de um campo também é informação."
+  },
   "tags": [
     "pydantic-ai",
     "llm-parsers",

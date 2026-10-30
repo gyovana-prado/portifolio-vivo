@@ -8,13 +8,12 @@ import {
   getProjects,
   t,
 } from '../lib/content';
-import { getGitHubStats } from '../lib/github';
 import Base from '../layouts/Base.astro';
 import Hero from './Hero.astro';
 import Now from './Now.astro';
 import Feed from './Feed.astro';
 import Projects from './Projects.astro';
-import CV from './CV.astro';
+import About from './About.astro';
 
 interface Props {
   lang: Lang;
@@ -28,7 +27,6 @@ const cv = getCV();
 const now = getNow();
 const feed = getFeed();
 const projects = getProjects();
-const stats = await getGitHubStats(profile.github_username);
 
 const title = `${profile.name} — ${t(profile.headline, lang)}`;
 const description = profile.bio ? t(profile.bio, lang) : t(profile.headline, lang);
@@ -47,9 +45,9 @@ const jsonLd = {
 ---
 
 <Base lang={lang} title={title} description={description} jsonLd={jsonLd}>
-  <Hero lang={lang} profile={profile} stats={stats} />
-  <Now lang={lang} now={now} />
-  <Feed lang={lang} entries={feed} projects={projects} />
+  <Hero lang={lang} profile={profile} />
   <Projects lang={lang} projects={projects} />
-  <CV lang={lang} cv={cv} />
+  <Feed lang={lang} entries={feed} projects={projects} />
+  <Now lang={lang} now={now} />
+  <About lang={lang} profile={profile} cv={cv} />
 </Base>

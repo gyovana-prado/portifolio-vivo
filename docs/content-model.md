@@ -21,6 +21,10 @@ content/
   "date": "2026-07-08",
   "type": "decision | problem-solved | shipped | learning",
   "tags": ["claude-code", "devx", "direnv"],
+  "title": {
+    "en": "Optional one-sentence headline that states the insight (~60 chars).",
+    "pt": "Manchete opcional de uma frase que diz o achado."
+  },
   "narrative": {
     "en": "Plain-language story: the problem, the decision, why it matters. 2-4 sentences a non-technical reader understands.",
     "pt": "A mesma história em português."
@@ -38,6 +42,7 @@ content/
 ```
 
 Notes:
+- `title` is optional; without it the site falls back to the narrative's first sentence.
 - `type` maps 1:1 to the four rubric criteria — it doubles as a visual badge on the site.
 - `status` is redundant with the branch (drafts live on `drafts`), but kept explicit so a future direct-publish mode doesn't require a schema change.
 - Entries are immutable after publish; corrections are new commits (git history is part of the credibility).
@@ -51,11 +56,19 @@ Notes:
   "title": { "en": "...", "pt": "..." },
   "summary": { "en": "...", "pt": "..." },
   "case_study": { "en": "markdown", "pt": "markdown" },
+  "story": {
+    "problem": { "en": "...", "pt": "..." },
+    "decision": { "en": "...", "pt": "..." },
+    "evidence": { "en": "...", "pt": "..." }
+  },
+  "metric": { "value": "−88%", "label": { "en": "execution time", "pt": "no tempo de execução" } },
   "stack": ["astro", "python", "mcp", "claude-code"],
   "links": { "repo": "https://...", "live": "https://..." },
   "period": { "start": "2026-07", "end": null }
 }
 ```
+
+`story` (problem → decision → evidence) and `metric` are optional; featured projects with a `story` render as the large two-column cards on the home page, the rest as compact rows.
 
 ## Now
 

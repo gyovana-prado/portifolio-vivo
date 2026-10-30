@@ -50,15 +50,17 @@ const base = lang === 'en' ? '/' : '/pt/';
   </head>
   <body>
     <a class="skip-link" href="#main">{strings.skipToContent}</a>
-    <nav class="topbar">
+    <nav class="topbar" aria-label="Main">
       <div class="wrap topbar-inner">
+        <a class="brand" href={base}>gyovana<span>.</span></a>
         <div class="nav-links">
+          <a href={`${base}#projects`} data-spy="projects">{strings.navProjects}</a>
+          <a href={`${base}#feed`} data-spy="feed">{strings.navDecisions}</a>
           <a href={`${base}#now`} data-spy="now">{strings.now}</a>
-          <a href={`${base}#feed`} data-spy="feed">{strings.feed}</a>
-          <a href={`${base}#projects`} data-spy="projects">{strings.projects}</a>
-          <a href={`${base}#experience`} data-spy="experience">{strings.experience}</a>
+          <a href={`${base}#about`} data-spy="about">{strings.navAbout}</a>
+          <a class="contact-nav" href={`${base}#contact`}>{strings.navContact}</a>
+          <a class="lang-switch" href={altHref}>{strings.switchLang}</a>
         </div>
-        <a class="lang-switch" href={altHref}>{strings.switchLang}</a>
       </div>
     </nav>
     <main id="main" class="wrap">
@@ -132,7 +134,7 @@ const base = lang === 'en' ? '/' : '/pt/';
                 links[id].classList.toggle('active', id === best);
               });
             },
-            { rootMargin: '-52px 0px -55% 0px', threshold: [0, 0.25, 0.5, 1] }
+            { rootMargin: '-72px 0px -55% 0px', threshold: [0, 0.25, 0.5, 1] }
           );
           ids.forEach(function (id) {
             var sec = document.getElementById(id);
@@ -150,7 +152,7 @@ const base = lang === 'en' ? '/' : '/pt/';
         position: sticky;
         top: 0;
         z-index: 10;
-        background: rgba(11, 12, 14, 0.82);
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--border);
@@ -160,14 +162,35 @@ const base = lang === 'en' ? '/' : '/pt/';
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 18px;
+        padding-bottom: 18px;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 1.2rem;
+        letter-spacing: -0.03em;
+        color: var(--text);
+        background-image: none;
+      }
+      .brand span {
+        color: var(--accent);
       }
       .nav-links {
         display: flex;
         flex-wrap: wrap;
-        gap: 18px;
-        font-size: 0.8rem;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px 26px;
+        font-size: 0.875rem;
+      }
+      .contact-nav {
+        color: var(--text) !important;
+        border-bottom: 1px solid var(--accent);
+      }
+      @media (max-width: 700px) {
+        .topbar-inner { align-items: flex-start; padding-top: 14px; padding-bottom: 14px; }
+        .nav-links { gap: 8px 14px; font-size: 0.78rem; max-width: 230px; }
+        .contact-nav { display: none; }
       }
       .nav-links a {
         color: var(--text-dim);
@@ -202,10 +225,10 @@ const base = lang === 'en' ? '/' : '/pt/';
         border-color: var(--accent-dim);
       }
       .site-footer {
-        padding: 40px 24px 60px;
+        padding-top: 22px;
+        padding-bottom: 40px;
         font-size: 0.8rem;
         border-top: 1px solid var(--border);
-        margin-top: 20px;
       }
     </style>
   </body>

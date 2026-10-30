@@ -2,6 +2,10 @@
   "id": "2026-07-21-llm-insights-pipeline-m1",
   "date": "2026-07-21",
   "type": "shipped",
+  "title": {
+    "en": "LLM insights grounded in facts.",
+    "pt": "Insights de LLM ancorados em fatos."
+  },
   "tags": [
     "fastapi",
     "llm-pipeline",

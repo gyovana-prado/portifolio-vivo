@@ -2,6 +2,10 @@
   "id": "2026-07-11-scroll-driven-animations",
   "date": "2026-07-11",
   "type": "learning",
+  "title": {
+    "en": "A timeline that draws itself without JavaScript.",
+    "pt": "Uma linha do tempo que se desenha sem JavaScript."
+  },
   "tags": [
     "css",
     "scroll-driven-animations",

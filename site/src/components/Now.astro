@@ -14,64 +14,53 @@ const strings = ui[lang];
 ---
 
 {now && now.items.length > 0 && (
-  <section id="now" class="reveal">
-    <div class="section-head">
-      <h2 class="section-title">{strings.now}</h2>
-      <span class="faint updated">{strings.updated} {formatDate(now.updated, lang)}</span>
+  <section id="now">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">{strings.nowEyebrow}</div>
+        <h2>{strings.nowTitle}</h2>
+      </div>
+      <p class="lede updated">{strings.nowSnapshot} · {formatDate(now.updated, lang)}</p>
     </div>
-    <ul class="now-list">
-      {now.items.map((item) => <li>{t(item, lang)}</li>)}
+    <ul class="now-grid">
+      {now.items.map((item) => <li class="reveal">{t(item, lang)}</li>)}
     </ul>
   </section>
 )}
 
 <style>
-  .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-  }
-  .updated {
-    font-size: 0.75rem;
-    font-family: var(--mono);
-  }
   /* Pulso: a discreet live indicator next to the freshness date. */
   .updated::before {
     content: '';
     display: inline-block;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--accent);
-    margin-right: 7px;
-    vertical-align: 1px;
-    animation: pulse 2.8s ease-out infinite;
-  }
-  .now-list {
-    list-style: none;
-  }
-  .now-list li {
-    position: relative;
-    padding-left: 20px;
-    margin-bottom: 8px;
-  }
-  /* Pulso: the heartbeat of the site — "this is happening now". */
-  .now-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.7em;
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--accent);
+    margin-right: 8px;
+    vertical-align: 1px;
     animation: pulse 2.8s ease-out infinite;
   }
-  .now-list li:nth-child(2)::before { animation-delay: 0.4s; }
-  .now-list li:nth-child(3)::before { animation-delay: 0.8s; }
+  .now-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 50px;
+  }
+  .now-grid li {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    font-size: 0.94rem;
+    color: var(--text-dim);
+  }
   @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(122, 162, 247, 0.5); }
-    60% { box-shadow: 0 0 0 7px rgba(122, 162, 247, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(122, 162, 247, 0); }
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent); }
+    60% { box-shadow: 0 0 0 7px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  @media (max-width: 700px) {
+    .now-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

@@ -2,6 +2,10 @@
   "id": "2026-10-28-prompt-eval-isolated-subagents-blind-judges",
   "date": "2026-10-28",
   "type": "problem-solved",
+  "title": {
+    "en": "A better prompt needs evidence.",
+    "pt": "Um prompt melhor precisa de evidência."
+  },
   "tags": [
     "prompt-eval",
     "llm-as-judge",
