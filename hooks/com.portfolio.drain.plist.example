@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Daily drain for the Living Portfolio (macOS LaunchAgent).
+
+  EXAMPLE ONLY — copy, replace the three /ABS/PATH placeholders and the
+  PATH entry, then load it (see hooks/README.md, "Daily drain"). It is a
+  LaunchAgent (per user, runs while you are logged in), not a LaunchDaemon:
+  the drain needs your Claude Code login, your `gh` auth and the transcripts
+  under ~/.claude/projects, which only exist in your user session.
+
+  Runs `make drain` every day at 19:00 local time. If the Mac is asleep at
+  that time, launchd runs it at the next wake-up (StartCalendarInterval
+  semantics) — nothing is lost, the queue just waits.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.portfolio.drain</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/make</string>
+    <string>-C</string>
+    <string>/ABS/PATH/portifolio-vivo</string>
+    <string>drain</string>
+  </array>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>19</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <!-- launchd starts with a minimal PATH: claude, gh, uv and python3 must be
+       reachable. Adjust to `dirname $(which claude)` etc. on your machine. -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/ABS/PATH/.local/bin</string>
+    <key>UV_NO_ENV_FILE</key>
+    <string>1</string>
+    <!-- Optional: Slack incoming webhook for the round digest. Leave the key
+         out to get the digest on stdout (the log file below) only. -->
+    <!-- <key>PORTFOLIO_SLACK_WEBHOOK</key>
+         <string>https://hooks.slack.com/services/...</string> -->
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/ABS/PATH/.claude/portfolio/drain.log</string>
+  <key>StandardErrorPath</key>
+  <string>/ABS/PATH/.claude/portfolio/drain.err.log</string>
+
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>

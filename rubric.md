@@ -58,11 +58,13 @@ Confidentiality is enforced by **information category**, not by name substitutio
 
 **When in doubt, generalize up one level.** "A client in retail fitness" → "an enterprise client". The technical story loses nothing; the confidentiality risk drops to zero.
 
+**How this is enforced.** Three barriers, in order. (1) The relevance evaluator applies these rules by category when it writes the entry. (2) A separate **confidentiality judge** (`hooks/confidentiality_judge.py`) reads the finished entry with this section as its only instruction and answers one question: *does the entry allow a reader to identify a client through the combination of sector, scale and geography — or through names, metrics or timelines?* Entries it retains go to a `retidas/<date>` PR for manual merge, never to the auto-merge window; an unreadable verdict also retains (fail-closed). (3) The local denylist (`~/.portfolio-mcp/denylist.json`) rejects names outright — the last barrier, and the only deterministic one. The judge exists precisely because the denylist cannot see "a São Paulo real-estate marketplace".
+
 **Contract awareness.** Before enabling the pipeline, the owner must verify their service contracts allow disclosing *that the work exists*, not just its details. Some agreements restrict acknowledging the engagement itself. This system cannot check that for you.
 
 ## Entry format produced by the evaluator
 
-Every logged entry is written in **two layers × two languages** at commit time:
+Every logged entry is written in **two layers × two languages** at commit time, and the evaluator ends with a structured verdict (`REGISTRADO <id>`, `DESCARTADO <reason>` or `FALHA <reason>`) so the drain never mistakes a tool failure for a discard:
 
 - **Narrative layer** (plain language, EN + PT): the problem, the decision, why it matters — readable by a non-technical person, conveying *why this was hard*.
 - **Technical layer** (expandable, EN + PT): stack, approach, trade-offs — enough for a technical reader to verify depth.

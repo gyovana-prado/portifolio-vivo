@@ -38,13 +38,29 @@ make validate         # checks every file against the schemas
 > single language, either put the same text in both fields, or drop `pt` from the
 > schemas in `mcp/schemas/` and the `t()` helper in `site/src/lib/content.ts`.
 
-## 3. Create the `drafts` branch
+## 3. Create the `staging` branch
 
-The automation writes here; `main` is only reached through the human gate.
+`log_activity` writes here; the drain moves entries from `staging` into PRs
+against `main`. (The drain creates it on first run if missing — this just makes
+it explicit.)
 
 ```bash
-git switch -c drafts && git push -u origin drafts && git switch main
+git switch -c staging && git push -u origin staging && git switch main
 ```
+
+> **Migrating from the old `drafts` branch?** Git cannot hold a branch `drafts`
+> and the PR refs `drafts/<date>` at the same time. Rename it once:
+> `gh api -X POST repos/OWNER/REPO/git/refs -f ref=refs/heads/staging -f sha=$(gh api repos/OWNER/REPO/git/ref/heads/drafts --jq .object.sha)`
+> then `gh api -X DELETE repos/OWNER/REPO/git/refs/heads/drafts`. The drain
+> refuses to run while `drafts` exists and prints these two commands.
+
+### 3b. Labels and the auto-merge Action
+
+The drain creates the labels `segurar` and `janela-zero` on first use. The hourly
+Action ([`.github/workflows/auto-merge-drafts.yml`](../.github/workflows/auto-merge-drafts.yml))
+runs with the default `GITHUB_TOKEN` and needs nothing else while `main` is
+unprotected. If you add branch protection with required reviews, the merge step
+will need a PAT or GitHub App token — see [architecture.md](architecture.md).
 
 ## 4. Deploy the site
 
@@ -75,12 +91,17 @@ with the token and repo in the env (never in the repo):
 claude mcp add portfolio --scope user \
   -e GITHUB_TOKEN=github_pat_YOUR_TOKEN \
   -e PORTFOLIO_REPO=YOUR_USER/YOUR_REPO \
+  -e UV_NO_ENV_FILE=1 \
   -- uv run --project "$(pwd)/mcp" portfolio-mcp
 ```
 
 Env vars the server reads: `GITHUB_TOKEN` and `PORTFOLIO_REPO` (required);
-`PORTFOLIO_DENYLIST`, `PORTFOLIO_DRAFTS_BRANCH`, `PORTFOLIO_MAIN_BRANCH` (optional,
-sensible defaults). Verify with `claude mcp list` — `portfolio` should be connected.
+`PORTFOLIO_DENYLIST`, `PORTFOLIO_DRAFTS_BRANCH` (default `staging`),
+`PORTFOLIO_MAIN_BRANCH` (optional, sensible defaults). `UV_NO_ENV_FILE=1` keeps
+`uv run` from aborting when your shell exports `UV_ENV_FILE` (see
+[mcp/README.md](../mcp/README.md)). Verify with `claude mcp list` — `portfolio`
+should be connected. The drain also needs the [`gh` CLI](https://cli.github.com/)
+logged in as the repo owner: it opens the PRs with your `gh` auth.
 
 ## 7. Configure the denylist
 
@@ -119,23 +140,32 @@ into `~/.claude/settings.json`, replacing the path with your absolute path:
 - [ ] Contracts reviewed: you may disclose *that* the work exists, not just its details ([rubric.md](../rubric.md), "Contract awareness")
 - [ ] Denylist covers every current client and employer
 - [ ] Token is fine-grained and single-repo
-- [ ] `make drain` on a real session either logs nothing or writes a draft — and the draft does **not** appear on the live site
-- [ ] `review_and_publish` merges an approved draft and the site rebuilds in ~1 min
+- [ ] `make drain` on a real session either discards it or opens a `drafts/<date>` PR — and the entry does **not** appear on the live site before the merge
+- [ ] An entry written with sector + scale + geography lands in a `retidas/<date>` PR with the label `segurar`
+- [ ] `config/zero_window.json` lists only projects with no client to protect
+- [ ] The Action ran at least once (Actions tab → "Auto-merge drafts") and the merged PR's entry is on the site in ~1 min
 
 ## Routine operation
 
 The daily loop is: **you just work.** The capture hook queues sessions silently.
-Then, whenever you feel like it (weekly is plenty):
+Once a day the LaunchAgent (or you, with `make drain`) runs a round:
 
 ```bash
-make drain            # evaluates queued sessions → writes drafts (via claude -p + MCP)
+make drain            # triage → relevance judge → confidentiality judge → PRs + digest
+make drain-dry        # see what is queued (no model, no PR)
 ```
 
-`make drain` spawns a headless `claude -p` per pending session that reads the
-transcript, judges it against `rubric.md`, and — only if it clears the bar — writes
-a **draft**. Then, in Claude Code, run **`review_and_publish`** to approve or reject
-drafts (under a minute), and **`update_now`** when your focus shifts. Nothing reaches
-the live site without that human approval.
+Each round opens at most three PRs: `drafts/<date>` (liberadas, 48h veto window),
+`drafts/<date>-zero` (personal/open source, merges on the next hourly run) and
+`retidas/<date>` (held by the confidentiality judge, label `segurar`, **manual
+merge**). The digest — Slack if `PORTFOLIO_SLACK_WEBHOOK` is set, stdout otherwise —
+lists titles, summaries and the PR link.
 
-See [hooks/README.md](../hooks/README.md) for the capture/drain internals and the
-`--dry-run` / `--limit` flags.
+Your job is the veto: read the digest, and if something must not go live, put the
+label `segurar` on the PR (or close it; to drop one entry, delete its file from the
+branch). Otherwise do nothing — the Action merges after 48h and the site rebuilds.
+Review the `retidas/*` PRs when you have a minute: edit the text on the branch if
+needed, then merge by hand. Run **`update_now`** when your focus shifts.
+
+See [hooks/README.md](../hooks/README.md) for the round internals, the LaunchAgent
+install and the `--skip-eval` / `--skip-pr` / `--limit` flags.
