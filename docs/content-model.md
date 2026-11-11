@@ -37,6 +37,7 @@ content/
     "en": "One line, measurable when possible. Optional.",
     "pt": "Uma linha, mensurável quando possível. Opcional."
   },
+  "project": "living-portfolio",
   "status": "draft | published"
 }
 ```
@@ -44,7 +45,8 @@ content/
 Notes:
 - `title` is optional; without it the site falls back to the narrative's first sentence.
 - `type` maps 1:1 to the four rubric criteria — it doubles as a visual badge on the site.
-- `status` is redundant with the branch (drafts live on `drafts`), but kept explicit so a future direct-publish mode doesn't require a schema change.
+- `project` is optional: the id of a `content/projects/<id>.json` the entry belongs to. Besides linking, it drives the **zero window**: ids listed in `config/zero_window.json` (personal and open-source work) skip the 48h veto and merge on the Action's next run.
+- `status`: `draft` while the entry sits on the `staging` branch; the drain writes it as `published` when it moves the entry into a `drafts/<date>` or `retidas/<date>` PR branch. The site only builds `main` and only renders `published`, so nothing shows before the merge — the merge is the publish, and the Action needs no commit step.
 - Entries are immutable after publish; corrections are new commits (git history is part of the credibility).
 
 ## Project

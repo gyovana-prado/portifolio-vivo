@@ -1,4 +1,4 @@
-.PHONY: help validate build dev preview check test install drain
+.PHONY: help validate build dev preview check test install drain drain-dry
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -26,5 +26,8 @@ test: ## Run the MCP server unit tests
 check: validate test ## Full local gate: validate content + run tests
 	@echo "✓ All checks passed."
 
-drain: ## Evaluate captured sessions (headless claude -p → drafts via MCP)
+drain: ## Drain round: triage + relevance + confidentiality judge → PRs drafts/<date> (veto window)
 	python3 hooks/drain_queue.py
+
+drain-dry: ## Show what the drain would evaluate (triage only; no model, no PR)
+	python3 hooks/drain_queue.py --dry-run

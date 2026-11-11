@@ -1,0 +1,7 @@
+{
+  "_comment": "Project ids (content/projects/<id>.json) whose feed entries skip the 48h veto window: personal and open-source work has no client to protect. The drain puts them in a drafts/<date>-zero PR with the label janela-zero, merged on the Action's next hourly run.",
+  "projects": [
+    "living-portfolio",
+    "rotas-sp"
+  ]
+}

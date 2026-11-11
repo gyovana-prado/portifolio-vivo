@@ -1,12 +1,15 @@
 name: CI
 
 # The content quality gate: a missing translation or malformed entry fails the
-# build, by design. Runs on every push/PR to the production branch.
+# build, by design. Runs on every push/PR to the production branch, and on
+# workflow_dispatch: auto-merge-drafts.yml merges with GITHUB_TOKEN, whose pushes
+# do not fire `on: push`, so it dispatches this workflow explicitly to deploy.
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   validate-and-build:
@@ -45,11 +48,12 @@ jobs:
           # Raises the GitHub API rate limit for build-time stats.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Publish to Cloudflare Pages — only on push to main, never for PRs or
-      # the drafts branch. Requires the CLOUDFLARE_API_TOKEN repo secret
+      # Publish to Cloudflare Pages — only from main (push, or the dispatch the
+      # auto-merge Action sends after merging), never for PRs or the staging /
+      # drafts/* branches. Requires the CLOUDFLARE_API_TOKEN repo secret
       # (scoped to Pages Edit on the single account).
       - name: Deploy to Cloudflare Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

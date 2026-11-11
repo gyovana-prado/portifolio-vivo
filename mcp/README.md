@@ -19,13 +19,15 @@ Five tools that write curated content to the portfolio repo via the GitHub API:
 
 | Tool | Writes to | Purpose |
 |------|-----------|---------|
-| `log_activity` | `drafts` | Write a feed entry (session-end hook, or manual). Never public. |
-| `review_and_publish` | `main` | List pending drafts, or publish/reject a selection — the human gate. |
+| `log_activity` | `staging` | Write a feed entry (drain evaluator, or manual). Never public. |
+| `review_and_publish` | `main` | Manual fallback: list staged entries, publish/reject a selection. |
 | `add_project` | `main` | Create/update a project case study. |
 | `update_now` | `main` | Replace `now.json` items. |
 | `get_portfolio_state` | — | Read-only snapshot; avoids duplicate logging. |
 
-`log_activity` can only reach `drafts`. Content reaches `main` only through
+`log_activity` can only reach `staging`. Content reaches `main` through the PRs
+the drain opens (`drafts/<date>`, merged by the hourly Action after a 48h veto
+window — see [docs/architecture.md](../docs/architecture.md)) or through
 `review_and_publish` with an explicit selection.
 
 ### Run
@@ -42,9 +44,10 @@ Set in the MCP client's `env` block (never in the repo):
 |-----|----------|---------|---------|
 | `PORTFOLIO_REPO` | yes | — | `owner/name` of the portfolio repo |
 | `GITHUB_TOKEN` | yes | — | Fine-grained PAT, single repo, contents:write |
-| `PORTFOLIO_DRAFTS_BRANCH` | no | `drafts` | Buffer branch for unpublished entries |
+| `PORTFOLIO_DRAFTS_BRANCH` | no | `staging` | Buffer branch for unpublished entries (was `drafts`; renamed because `drafts/<date>` PR refs cannot coexist with a `drafts` branch) |
 | `PORTFOLIO_MAIN_BRANCH` | no | `main` | Production branch |
 | `PORTFOLIO_DENYLIST` | no | `~/.portfolio-mcp/denylist.json` | Local file of names to reject |
+| `UV_NO_ENV_FILE` | recommended | — | Set to `1` if your shell exports `UV_ENV_FILE`: otherwise `uv run` aborts in directories without a `.env` and the server never starts (`CONNECTION_CLOSED`) |
 
 ### Denylist
 
@@ -68,7 +71,8 @@ is rejected outright.
       "args": ["run", "--project", "/abs/path/to/portfolio/mcp", "portfolio-mcp"],
       "env": {
         "PORTFOLIO_REPO": "you/living-portfolio",
-        "GITHUB_TOKEN": "github_pat_..."
+        "GITHUB_TOKEN": "github_pat_...",
+        "UV_NO_ENV_FILE": "1"
       }
     }
   }

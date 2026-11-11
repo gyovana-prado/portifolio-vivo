@@ -1,0 +1,113 @@
+name: Auto-merge drafts (veto window)
+
+# The publisher half of the veto window. Every hour it looks at the open PRs the
+# drain opened (head `drafts/*`) and squash-merges the ones whose window has
+# closed:
+#   - label `janela-zero`  → merged on the first run (personal/open source work)
+#   - otherwise            → merged once the PR is older than 48h
+#   - label `segurar`      → never (that is the veto; remove the label to resume)
+#   - head `retidas/*`     → never (confidentiality judge held it; manual merge)
+# Entries are written by the drain already with status "published", so the merge
+# itself is the publish: it pushes to main and the site rebuilds.
+#
+# Permissions: the default GITHUB_TOKEN with contents+pull-requests write is enough
+# to merge (main has no branch protection). One gotcha: a push made with
+# GITHUB_TOKEN does NOT trigger push-based workflows, so after merging we
+# dispatch ci.yml explicitly (actions: write) to validate, build and deploy.
+# If you later protect `main` with required reviews, merging will need a PAT or
+# a GitHub App token instead — see docs/architecture.md.
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: auto-merge-drafts
+  cancel-in-progress: false
+
+env:
+  WINDOW_HOURS: "48"
+  VETO_LABEL: segurar
+  ZERO_LABEL: janela-zero
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge PRs whose veto window has closed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          now=$(date -u +%s)
+          merged=0
+          gh pr list --state open --limit 100 \
+            --json number,headRefName,createdAt,labels,isDraft,mergeable,statusCheckRollup \
+            > prs.json
+          count=$(jq length prs.json)
+          echo "open PRs: $count"
+
+          for i in $(seq 0 $((count - 1))); do
+            pr=$(jq -c ".[$i]" prs.json)
+            number=$(echo "$pr" | jq -r .number)
+            head=$(echo "$pr" | jq -r .headRefName)
+            created=$(echo "$pr" | jq -r .createdAt)
+            labels=$(echo "$pr" | jq -r '[.labels[].name] | join(",")')
+            draft=$(echo "$pr" | jq -r .isDraft)
+            mergeable=$(echo "$pr" | jq -r .mergeable)
+            failing=$(echo "$pr" | jq -r '[.statusCheckRollup[]? | select((.conclusion // .state) as $c | $c == "FAILURE" or $c == "ERROR" or $c == "CANCELLED" or $c == "TIMED_OUT")] | length')
+
+            case "$head" in
+              drafts/*) ;;
+              retidas/*) echo "#$number $head: retidas — merge manual, ignorando"; continue ;;
+              *) continue ;;
+            esac
+
+            if [[ ",$labels," == *",$VETO_LABEL,"* ]]; then
+              echo "#$number $head: label $VETO_LABEL — vetado, ignorando"; continue
+            fi
+            if [[ "$draft" == "true" ]]; then
+              echo "#$number $head: PR em draft — ignorando"; continue
+            fi
+
+            age_h=$(( (now - $(date -u -d "$created" +%s)) / 3600 ))
+            if [[ ",$labels," == *",$ZERO_LABEL,"* ]]; then
+              echo "#$number $head: $ZERO_LABEL — merge imediato"
+            elif (( age_h >= WINDOW_HOURS )); then
+              echo "#$number $head: ${age_h}h >= ${WINDOW_HOURS}h — janela fechada"
+            else
+              echo "#$number $head: ${age_h}h < ${WINDOW_HOURS}h — ainda na janela"; continue
+            fi
+
+            if [[ "$mergeable" != "MERGEABLE" ]]; then
+              echo "#$number $head: mergeable=$mergeable — pulando (resolva o conflito no PR)"; continue
+            fi
+            if (( failing > 0 )); then
+              echo "#$number $head: $failing check(s) falhando — pulando"; continue
+            fi
+
+            gh pr merge "$number" --squash --delete-branch \
+              --subject "publish: $head (#$number)" \
+              --body "Janela de veto fechada sem veto. Merge automático por auto-merge-drafts.yml."
+            merged=$((merged + 1))
+          done
+
+          echo "merged=$merged" >> "$GITHUB_OUTPUT"
+          echo "merged: $merged"
+        id: merge
+
+      # Pushes made with GITHUB_TOKEN do not fire `on: push` workflows, so the
+      # deploy would never run. workflow_dispatch is the documented exception.
+      - name: Trigger CI + deploy on main
+        if: steps.merge.outputs.merged != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run ci.yml --ref main

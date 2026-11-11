@@ -1,14 +1,18 @@
 """portfolio-mcp MCP server: the tools that write curated content to the repo.
 
 Tools:
-  log_activity        write a feed entry to the drafts branch (the human gate is publish)
-  review_and_publish  list pending drafts, or publish/reject a selection to main
+  log_activity        write a feed entry to the STAGING branch (never public)
+  review_and_publish  list staged entries, or publish/reject a selection to main
+                      (manual fallback — the normal path is the drain's PR +
+                      48h veto window, see docs/architecture.md)
   add_project         create/update a project (owner-invoked, writes to main)
   update_now          replace now.json items (owner-invoked, writes to main)
   get_portfolio_state read-only snapshot, so the LLM avoids duplicate logging
 
-Security: log_activity can only reach `drafts`. Publishing to `main` happens
-only through review_and_publish with an explicit selection — the human gate.
+Security: log_activity can only reach the staging branch (PORTFOLIO_DRAFTS_BRANCH,
+default `staging`). Content reaches `main` either through a PR the drain opens
+(merged by the auto-merge Action after the veto window) or through
+review_and_publish with an explicit selection.
 """
 
 from __future__ import annotations
@@ -49,14 +53,15 @@ def client() -> GitHubClient:
 
 @mcp.tool()
 def log_activity(entry: dict[str, Any]) -> str:
-    """Write a portfolio feed entry to the drafts branch.
+    """Write a portfolio feed entry to the staging branch.
 
-    Normally called by the session-end hook, but can be invoked manually
+    Normally called by the drain evaluator, but can be invoked manually
     ("loga isso no portfólio"). The `entry` is the full feed-entry object
     (see docs/content-model.md): id, date, type, tags, narrative{en,pt},
-    technical{en,pt}, optional outcome{en,pt}, status. The tool validates the
-    schema, enforces bilingual completeness, and rejects denylisted names.
-    Nothing written here is public until review_and_publish.
+    technical{en,pt}, optional outcome{en,pt}, optional project, status. The
+    tool validates the schema, enforces bilingual completeness, and rejects
+    denylisted names. Nothing written here is public: the drain's publish
+    stage moves staged entries into a PR with a veto window.
     """
     cfg = config()
     entry.setdefault("status", "draft")
@@ -77,7 +82,7 @@ def log_activity(entry: dict[str, Any]) -> str:
         )
     return (
         f"✓ Logged '{entry['id']}' to the {cfg.drafts_branch} branch. "
-        "It is NOT public — run review_and_publish to publish it."
+        "It is NOT public — the drain's publish stage will open a PR for it."
     )
 
 
@@ -85,14 +90,15 @@ def log_activity(entry: dict[str, Any]) -> str:
 def review_and_publish(
     approve: list[str] | None = None, reject: list[str] | None = None
 ) -> str:
-    """Review pending drafts, or publish/reject a selection.
+    """Review staged entries, or publish/reject a selection (manual fallback).
 
-    Call with no arguments to LIST pending drafts (their id, type, and narrative)
+    Call with no arguments to LIST staged entries (their id, type, and narrative)
     so the owner can decide. Then call again with `approve` and/or `reject` as
     lists of entry ids:
-      - approved entries are marked published and merged to the main branch,
-      - rejected entries are deleted from the drafts branch.
-    This is the human gate — the only path content takes to main.
+      - approved entries are marked published and written to the main branch,
+      - rejected entries are deleted from the staging branch.
+    The normal path is the drain's PR with a 48h veto window; use this to
+    publish something right now, or to drop a staged entry before the next round.
     """
     cfg = config()
     with client() as gh:

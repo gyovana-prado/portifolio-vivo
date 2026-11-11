@@ -18,7 +18,7 @@ DEFAULT_DENYLIST = Path.home() / ".portfolio-mcp" / "denylist.json"
 class Config:
     repo: str  # "owner/name"
     token: str
-    drafts_branch: str = "drafts"
+    drafts_branch: str = "staging"
     main_branch: str = "main"
     denylist_path: Path = DEFAULT_DENYLIST
     denylist: list[str] = field(default_factory=list)
@@ -62,7 +62,7 @@ def load_config() -> Config:
     return Config(
         repo=repo,
         token=token,
-        drafts_branch=os.environ.get("PORTFOLIO_DRAFTS_BRANCH", "drafts"),
+        drafts_branch=os.environ.get("PORTFOLIO_DRAFTS_BRANCH", "staging"),
         main_branch=os.environ.get("PORTFOLIO_MAIN_BRANCH", "main"),
         denylist_path=denylist_path,
         denylist=load_denylist(denylist_path),
